@@ -15,10 +15,13 @@ Tail.propTypes = {
     index: PropTypes.number.isRequired,
     color: PropTypes.oneOf([
         'red',
+        'yellow',
         'green',
         'blue',
-        'yellow',
-        'white',
+        'orange',
+        'dark-blue',
+        'violet',
+        'white'
     ]).isRequired,
 }
 export default Tail

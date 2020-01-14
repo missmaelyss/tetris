@@ -1,0 +1,37 @@
+.tail {
+    /* font-size: 2em; */
+    flex: 1 1 calc(100% / 10);
+    outline: 1px solid #E6E9ED;
+    height: 30px;
+    /* width: 10px; */
+    display: flex;
+    cursor: default;
+  }
+/* .tail.undefined {
+    outline: 0.1px solid silver;
+} */
+
+.tail.red {
+    background: #ff4444;
+}
+.tail.yellow {
+    background: #ffbb33;
+}
+.tail.green {
+    background: #00c851;
+}
+.tail.blue {
+    background: #33b5e5;
+}
+.tail.orange {
+    background: #ff8800;
+}
+.tail.dark-blue {
+    background: #4285f4;
+}
+.tail.violet {
+    background: #aa66cc;
+}
+
+
+

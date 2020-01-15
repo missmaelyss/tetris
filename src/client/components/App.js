@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Tail from './Tail'
+import io from "socket.io-client";
 import shuffle from 'lodash.shuffle'
 import './App.css'
 
@@ -63,7 +64,7 @@ class App extends Component {
   }
 
   render() {
-    const { tails , pause } = this.state
+    const { tails , response } = this.state
     return (
       <div className="area" onClick={() => this.switchPause()}>
         {tails.map((colorIndex, index) => (
@@ -75,7 +76,10 @@ class App extends Component {
       </div>
     )
   }
-
+  componentDidMount() {
+    const endpoint = 'localhost:4001';
+    const socket = io.connect(endpoint + '?room=1245&name='+(Math.random()%2));
+  }
   // componentDidMount() {
   //   console.log("RENDER")
   //   setTimeout(() => {

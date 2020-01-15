@@ -1,28 +1,23 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
-const axios = require("axios");
 const port = process.env.PORT || 4001;
 const index = require("./routes/index");
+const Game = require("./objects/Game");
+
 const app = express();
 app.use(index);
 const server = http.createServer(app);
 const io = socketIo(server); // < Interesting!
-const getApiAndEmit = async socket => {
-    try {
-      socket.emit("FromAPI", "chibre"); // Emitting a new message. It will be consumed by the client
-    } catch (error) {
-      console.error(`Error: ${error.code}`);
-    }
-}
+let i = 0;
+let Games = [];
 
-let interval;
 io.on("connection", socket => {
-  console.log("New client connected");
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  let currentGame = Games.find(element => element.roomId = socket.handshake.query.room)
+  if (!currentGame)
+    Games.push(new Game(socket.handshake.query.room, socket.handshake.query.name))
+  else
+    currentGame.joinRoom(socket.handshake.query.name);
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

@@ -9,17 +9,22 @@ const app = express();
 app.use(index);
 const server = http.createServer(app);
 const io = socketIo(server); // < Interesting!
-let i = 0;
 let Games = [];
 
 io.on("connection", socket => {
   let currentGame = Games.find(element => element.roomId = socket.handshake.query.room)
   if (!currentGame)
-    Games.push(new Game(socket.handshake.query.room, socket.handshake.query.name))
+    Games.push(currentGame = new Game(socket.handshake.query.room, socket.handshake.query.name))
   else
     currentGame.joinRoom(socket.handshake.query.name);
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    currentGame.leaveRoom(socket.handshake.query.name)
+    if (currentGame.players.length == 0){
+      delete currentGame;
+      console.log("Room #" + socket.handshake.query.room + " closed because it was empty")
+      Games.splice(Games.indexOf((element) => element.roomId == socket.handshake.query.room))
+      console.log(Games)
+    }
   });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

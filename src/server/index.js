@@ -14,9 +14,9 @@ let Games = [];
 io.on("connection", socket => {
   let currentGame = Games.find(element => element.roomId = socket.handshake.query.room)
   if (!currentGame)
-    Games.push(currentGame = new Game(socket.handshake.query.room, socket.handshake.query.name))
+    Games.push(currentGame = new Game(socket.handshake.query.room, socket.handshake.query.name, socket))
   else
-    currentGame.joinRoom(socket.handshake.query.name);
+    currentGame.joinRoom(socket.handshake.query.name, socket);
   socket.on("disconnect", () => {
     currentGame.leaveRoom(socket.handshake.query.name)
     if (currentGame.players.length == 0){

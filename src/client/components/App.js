@@ -79,6 +79,9 @@ class App extends Component {
   componentDidMount() {
     const endpoint = 'localhost:4001';
     const socket = io.connect(endpoint + '?room=1245&name='+parseInt(Math.random()*1000));
+    socket.on('players', (data) => {
+      console.log(data)
+    })
   }
   // componentDidMount() {
   //   console.log("RENDER")

@@ -1,0 +1,15 @@
+.game {
+    outline: 3px solid rgb(235, 235, 235);
+    display: flex;
+    flex-wrap: wrap;
+    margin: inherit;
+    user-select: none;
+  }
+
+.game.real {
+  width: 300px;
+}
+
+.game.other {
+  width: 50px;
+}

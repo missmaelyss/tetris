@@ -3,16 +3,12 @@ import React from 'react'
 
 import './Tail.css'
 
-const Tail = ({ index, color }) => (
-    <div className={`tail ${color}`}>
-        <span className="symbol">
-            {}
-        </span>
+const Tail = ({ color , other}) => (
+    <div className={`tail ${color} ${other}`}>
     </div>
 )
 
 Tail.propTypes = {
-    index: PropTypes.number.isRequired,
     color: PropTypes.oneOf([
         'red',
         'yellow',

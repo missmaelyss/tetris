@@ -1,15 +1,17 @@
 .tail {
-    /* font-size: 2em; */
     flex: 1 1 calc(100% / 10);
     outline: 1px solid #E6E9ED;
-    height: 30px;
-    /* width: 10px; */
     display: flex;
     cursor: default;
   }
-/* .tail.undefined {
-    outline: 0.1px solid silver;
-} */
+
+.tail.real {
+    height: 30px;
+}
+
+.tail.other {
+    height: 5px;
+}
 
 .tail.red {
     background: #ff4444;

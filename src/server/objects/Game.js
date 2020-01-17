@@ -10,21 +10,34 @@ function Game(roomId, creator, socket){
     this.leaveRoom = leaveRoom
     this.startGame = startGame
     this.sendToAll = sendToAll
+
+    //test Mae
+    this.changeColorGame = changeColorGame
+    this.changeMyColor = changeMyColor
+    this.otherPlayersData = otherPlayersData
+
     console.log(creator, "opened the room #" + roomId)
     return this;
 }
 
 function joinRoom(name, socket){
     //TODO: need to check if the username is taken
+    
+    // newOne = new Player(name, (this.status == "waiting" ? 1 : 0), socket)
+    // this.players.push(newOne)
+
+    // I changed this
     this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket))
+
     console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
-    this.sendToAll("players", this.publicPlayersData())
+
+    this.sendToAll("other", "")
 }
 
 function leaveRoom(name) {
     this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
     console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
-    this.sendToAll("players", this.publicPlayersData())
+    this.sendToAll("other", "")
 }
 
 function startGame(name) {
@@ -39,6 +52,25 @@ function startGame(name) {
     this.status = 'starting'
 }
 
+function changeColorGame() {
+    this.players.forEach(player => {
+        player.changeColorGrid()
+        player.sendMyInfo()
+    });
+    this.sendToAll("other", "")
+}
+
+function changeMyColor(name) {
+    this.players.forEach(player => {
+        if (player.name == name) {
+            player.changeColorGrid()        
+            player.sendMyInfo()
+        }
+        // this.sendToAll("other", this.otherPlayersData(player))
+    });
+    this.sendToAll("other", "")
+}
+
 function    publicPlayersData(){
     var publicPlayersData = []
 
@@ -50,10 +82,31 @@ function    publicPlayersData(){
     return publicPlayersData
 }
 
-function sendToAll(tag, data){
-    this.players.forEach(player => {
-        player.socket.emit(tag, data)
-    });
+function    otherPlayersData(player){
+    var otherPlayersData = []
+
+    this.players.forEach(other => {
+        if (other != player) {
+            let copyPlayer = {... other}
+            delete copyPlayer.socket
+            otherPlayersData.push(copyPlayer)
+        }
+    })
+    return otherPlayersData
+}
+
+function sendToAll(tag, data) {
+    if (tag === "other") {
+        this.players.forEach(player => {
+            data = this.otherPlayersData(player)
+            player.socket.emit(tag, data)
+        });
+    }
+    else {
+        this.players.forEach(player => {
+            player.socket.emit(tag, data)
+        });
+    }
 }
 
 module.exports = Game;

@@ -1,94 +1,47 @@
-import React, { Component } from 'react'
-import Tail from './Tail'
-import io from "socket.io-client";
-import shuffle from 'lodash.shuffle'
+import ReactDOM from 'react-dom'
+import React from 'react'
+import io from "socket.io-client"
 import './App.css'
+import Game from './Game'
 
-const COLORS = ["red", "yellow", "green",
- "blue", "orange", "dark-blue", "violet", "white"]
+const endpoint = 'localhost:4001';
+const socket = io.connect(endpoint + '?room=1245&name='+parseInt(Math.random()*1000));
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
+socket.on('other', (others) => {
 
-class App extends Component {
-    state = {
-      tails: this.generateForm(),
-      pause: false,
-  }
-
-  generateForm() {
-    const result = []
-    const size = 10 * 20
-    if (!this.start) {
-      while (result.length < size)
-      {
-        if (result.length < 15)
-          result.push(getRandomInt(8))
-        else
-          result.push(7)
-        }
-    }
-    return (result)
-    // return shuffle(result)
-  }
-
-  // moveDown() {
-  //   const result = []
-  //   const { tails, pause } = this.state
-  //   const size = 10 * 20
-  //   var n = 0
-  //   while (n < size)
-  //   {
-  //     if (n > 9)
-  //       result[n] = tails[n - 10]
-  //     else
-  //       result[n] = "white"
-  //     n++
-  //   }
-
-  //   setTimeout(() => {
-  //     this.setState({ tails: pause ? result : this.moveDown() });
-  //   }, 1500);
-  //   return result
-  // }
-
-  switchPause()
-  {
-    const { tails, pause } = this.state
-    this.setState({ pause: !pause})
-    // if (pause) {
-    //   this.moveDown()
-    // }
-    console.log(this.state.pause)
-  }
-
-  render() {
-    const { tails , response } = this.state
-    return (
-      <div className="area" onClick={() => this.switchPause()}>
-        {tails.map((colorIndex, index) => (
-          <Tail
-            index={index}
-            color={COLORS[colorIndex]}
-            />
-        ))}
-      </div>
+  var element = others.map((other) => (
+    <Game grid={other.grid} other="other"/>
     )
-  }
-  componentDidMount() {
-    const endpoint = 'localhost:4001';
-    const socket = io.connect(endpoint + '?room=1245&name='+parseInt(Math.random()*1000));
-    socket.on('players', (data) => {
-      console.log(data)
-    })
-  }
-  // componentDidMount() {
-  //   console.log("RENDER")
-  //   setTimeout(() => {
-  //     this.setState({ tails: this.moveDown() });
-  //   }, 1500);
-  // }
+  )
+  ReactDOM.render(
+    element,
+    document.getElementById('other')
+  );
+})
+
+socket.on('me', (me) => {
+  console.log(me)
+  ReactDOM.render(
+    <Game grid={me.grid} other="real" />,
+    document.getElementById('real')
+  );
+  ReactDOM.render(
+    <button onClick={() => 
+      socket.emit('changeMyColor', {name: me.name})}>Change My Color</button>,
+    document.getElementById('button')
+  );
+})
+
+const App = () => {
+  return (
+    <div id="app">
+      <div id="real"></div>
+      <div id="other"></div>
+      <div id="button"></div>
+      <button onClick={() => socket.emit('changeColor')}>Change All Color</button>
+    </div>
+    
+  );
 }
 
 export default App

@@ -2,6 +2,7 @@ function Player(name, permission, socket){
     this.name = name,
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
+    this.classement = 1 // 0 = default, 1 = winner, else classement 
     this.grid = createEmptyGrid()
 }
 

@@ -10,7 +10,11 @@ function Game(roomId, creator, socket){
     this.leaveRoom = leaveRoom
     this.startGame = startGame
     this.sendToAll = sendToAll
+    this.sendPlayersOwnGrid = sendPlayersOwnGrid
+    this.gameLoop = gameLoop
+    this.gameTick = gameTick
     console.log(creator, "opened the room #" + roomId)
+    this.startGame(creator)
     return this;
 }
 
@@ -20,13 +24,26 @@ function joinRoom(name, socket){
     console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
     this.sendToAll("players", this.publicPlayersData())
 }
-
 function leaveRoom(name) {
     this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
     console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
     this.sendToAll("players", this.publicPlayersData())
 }
-
+function gameTick(){
+    console.log("tick")
+}
+function gameLoop(){
+    let     interval = setInterval(() => {
+        if (this.players.length === 0 || !(this.players.some((player) => player.classement === 0))){
+            clearInterval(interval)
+            this.status = "ended"
+            console.log("#" + this.roomId + " just ended")
+        }
+        else {
+            this.gameTick()
+        }
+    }, 1000);
+}
 function startGame(name) {
     if (this.status !== "waiting"){
         console.log(name + " tried to start the game in Room #" + this.roomId, "but it already started")
@@ -36,9 +53,11 @@ function startGame(name) {
         console.log(name + " tried to start the game in Room #" + this.roomId, "but don't have permission")
         return -1;
     }
-    this.status = 'starting'
+    console.log("#" + this.roomId + " just started")
+    this.status = 'started'
+    this.gameLoop()
+    
 }
-
 function    publicPlayersData(){
     var publicPlayersData = []
 
@@ -48,6 +67,12 @@ function    publicPlayersData(){
         publicPlayersData.push(copyPlayer)
     })
     return publicPlayersData
+}
+
+function    sendPlayersOwnGrid(){
+    this.players.forEach(player => {
+        player.socket.emit(tag, player.grid)
+    });
 }
 
 function sendToAll(tag, data){

@@ -17,7 +17,7 @@ function Game(roomId, creator, socket){
     //test Mae
     this.changeColorGame = changeColorGame
     this.changeMyColor = changeMyColor
-    this.otherPlayersData = otherPlayersData
+    // this.otherPlayersData = otherPlayersData
 
     console.log(creator, "opened the room #" + roomId)
     this.startGame(creator)
@@ -74,6 +74,7 @@ function startGame(name) {
 
 function changeColorGame() {
     this.players.forEach(player => {
+
         player.changeColorGrid()
         player.sendMyInfo()
     });
@@ -108,24 +109,25 @@ function    sendPlayersOwnGrid(){
     });
 }
 
-function    otherPlayersData(player){
-    var otherPlayersData = []
+// function    otherPlayersData(player){
+//     var otherPlayersData = []
 
-    this.players.forEach(other => {
-        if (other != player) {
-            let copyPlayer = {... other}
-            delete copyPlayer.socket
-            otherPlayersData.push(copyPlayer)
-        }
-    })
-    return otherPlayersData
-}
+//     this.players.forEach(other => {
+//         if (other != player) {
+//             let copyPlayer = {... other}
+//             delete copyPlayer.socket
+//             otherPlayersData.push(copyPlayer)
+//         }
+//     })
+//     return otherPlayersData
+// }
 
 function sendToAll(tag, data) {
     if (tag === "other") {
+        data = this.publicPlayersData()
         this.players.forEach(player => {
-            data = this.otherPlayersData(player)
             player.socket.emit(tag, data)
+            
         });
     }
     else {
@@ -133,6 +135,7 @@ function sendToAll(tag, data) {
             player.socket.emit(tag, data)
         });
     }
+    console.log("end SentToAll")
 }
 
 module.exports = Game;

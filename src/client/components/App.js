@@ -5,10 +5,11 @@ import './App.css'
 import Game from './Game'
 
 const endpoint = 'localhost:4001';
-const socket = io.connect(endpoint + '?room=1245&name='+parseInt(Math.random()*1000));
+const name = parseInt(Math.random()*1000).toString()
+const socket = io.connect(endpoint + '?room=1245&name='+ name);
 
 socket.on('other', (others) => {
-
+  others.splice(others.findIndex((element) => element.name === name), 1)
   var element = others.map((other) => (
     <Game grid={other.grid} other="other"/>
     )

@@ -5,7 +5,6 @@ function Game(roomId, creator, socket) {
     this.roomId = roomId,
     this.status = "waiting",
     this.players = [new Player(creator, 2, socket)]
-    
     this.playerData = []
     this.publicPlayersData = publicPlayersData
     this.joinRoom = joinRoom
@@ -15,20 +14,19 @@ function Game(roomId, creator, socket) {
     this.sendPlayersOwnGrid = sendPlayersOwnGrid
     this.gameLoop = gameLoop
     this.gameTick = gameTick
-
-    // this.piece = new Piece()
     this.printMyPiece = printMyPiece
     this.moveMyPiece = moveMyPiece
+    this.move = move
+
 
     //test Mae
     this.changeColorGame = changeColorGame
     this.changeMyColor = changeMyColor
 
     console.log(creator, "opened the room #" + roomId)
-    this.startGame(creator)
     this.players[0].sendMyInfo()
     // this.piece.changePosition([3, -3])
-
+    setTimeout(()=> {this.startGame(creator)}, 8000)
     return this;
 }
 
@@ -51,6 +49,15 @@ function leaveRoom(name) {
 }
 
 function gameTick(){
+    this.players.forEach((player) => {
+        console.log(player.piece.position[1] + player.piece.grid.length)
+        if (player.piece.position[1] + player.piece.grid.length > 19){
+            delete player.piece;
+            player.piece = new Piece;
+        }
+        this.moveMyPiece(player.name)
+
+    })
     console.log("tick")
 }
 
@@ -79,7 +86,6 @@ function startGame(name) {
     console.log("#" + this.roomId + " just started")
     this.status = 'started'
     this.gameLoop()
-    
 }
 
 function changeColorGame(name) {
@@ -106,7 +112,16 @@ function printMyPiece(name) {
 function moveMyPiece(name) {
     var player = this.players.find((element) => element.name == name)
     player.removePieceToGrid()
-    player.piece.changePosition([3, (player.piece.position[1] + 4) % 20 - 3])
+    player.piece.changeYPosition(-1)
+    player.addPieceToGrid()
+    player.sendMyInfo()
+    this.sendToAll("players", data = this.playerData)
+}
+
+function move(name, direction) {
+    var player = this.players.find((element) => element.name == name)
+    player.removePieceToGrid();
+    (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
     player.addPieceToGrid()
     player.sendMyInfo()
     this.sendToAll("players", data = this.playerData)

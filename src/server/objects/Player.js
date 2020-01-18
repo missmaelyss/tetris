@@ -5,21 +5,14 @@ function Player(name, permission, socket){
     this.color = 0
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
-    this.classement = 1 // 0 = default, 1 = winner, else classement 
+    this.classement = 0 // 0 = default, 1 = winner, else classement 
     this.grid = new Array(200).fill(this.color)
-
     this.piece = new Piece()
-    this.piece.changePosition([3, -4])
-    // this.grid = createEmptyGrid()
-
     // MAE
     this.changeColorGrid = changeColorGrid
     this.sendMyInfo = sendMyInfo
-
     this.addPieceToGrid = addPieceToGrid
     this.removePieceToGrid = removePieceToGrid
-
-    // this.sendMyInfo()
 }
 
 function changeColorGrid() {

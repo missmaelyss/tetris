@@ -1,27 +1,27 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import Tail from './Tail'
-import './Game.css'
+import './Grid.css'
 
 const COLORS = ["red", "yellow", "green",
  "blue", "orange", "dark-blue", "violet", "white"]
 
-const Game = ({ grid, other }) => (
-    <div className={`game ${other}`}>
-        {grid.map((line, index) => (
-            line.map((colorIndex, index) => (
+const Grid = ({ grid, other }) => (
+    <div className={`grid ${other}`}>
+        {
+            grid.map((colorIndex, index) => (
                 <Tail
                     key={index}
                     color={ COLORS[colorIndex] }
                     other={other}
                 />
             ))
-        ))}
+        }
     </div>
 )
 
-Game.propTypes = {
+Grid.propTypes = {
     grid: PropTypes.array.isRequired,
 }
 
-export default Game
+export default Grid

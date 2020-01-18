@@ -1,10 +1,12 @@
 const Player = require("./Player");
+const Piece = require("./Piece");
 
-function Game(roomId, creator, socket){
+function Game(roomId, creator, socket) {
     this.roomId = roomId,
     this.status = "waiting",
     this.players = [new Player(creator, 2, socket)]
     
+    this.playerData = []
     this.publicPlayersData = publicPlayersData
     this.joinRoom = joinRoom
     this.leaveRoom = leaveRoom
@@ -14,37 +16,44 @@ function Game(roomId, creator, socket){
     this.gameLoop = gameLoop
     this.gameTick = gameTick
 
+    // this.piece = new Piece()
+    this.printMyPiece = printMyPiece
+    this.moveMyPiece = moveMyPiece
+
     //test Mae
     this.changeColorGame = changeColorGame
     this.changeMyColor = changeMyColor
-    // this.otherPlayersData = otherPlayersData
 
     console.log(creator, "opened the room #" + roomId)
     this.startGame(creator)
+    this.players[0].sendMyInfo()
+    // this.piece.changePosition([3, -3])
+
     return this;
 }
 
 function joinRoom(name, socket){
     //TODO: need to check if the username is taken
     
-    // newOne = new Player(name, (this.status == "waiting" ? 1 : 0), socket)
-    // this.players.push(newOne)
-
-    // I changed this
     this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket))
 
     console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
-
-    this.sendToAll("other", "")
+    this.playerData = this.publicPlayersData()
+    this.sendToAll("players", data = this.playerData)
 }
+
 function leaveRoom(name) {
     this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
     console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
-    this.sendToAll("other", "")
+    // this.sendToAll("players", data = this.publicPlayersData())
+    this.playerData = this.publicPlayersData()
+    this.sendToAll("players", data = this.playerData)
 }
+
 function gameTick(){
     console.log("tick")
 }
+
 function gameLoop(){
     let     interval = setInterval(() => {
         if (this.players.length === 0 || !(this.players.some((player) => player.classement === 0))){
@@ -57,6 +66,7 @@ function gameLoop(){
         }
     }, 1000);
 }
+
 function startGame(name) {
     if (this.status !== "waiting"){
         console.log(name + " tried to start the game in Room #" + this.roomId, "but it already started")
@@ -72,24 +82,35 @@ function startGame(name) {
     
 }
 
-function changeColorGame() {
+function changeColorGame(name) {
     this.players.forEach(player => {
-
         player.changeColorGrid()
-        player.sendMyInfo()
     });
-    this.sendToAll("other", "")
+    this.players.find((element) => element.name == name).sendMyInfo()
+    console.log("Change Color Button Pushed")
+    this.sendToAll("players", data = this.playerData)
 }
 
 function changeMyColor(name) {
-    this.players.forEach(player => {
-        if (player.name == name) {
-            player.changeColorGrid()        
-            player.sendMyInfo()
-        }
-        // this.sendToAll("other", this.otherPlayersData(player))
-    });
-    this.sendToAll("other", "")
+    this.players.find((element) => element.name == name).changeColorGrid()
+    // this.players.find((element) => element.name == name).addPieceToGrid(this.piece)
+    this.players.find((element) => element.name == name).sendMyInfo()
+    this.sendToAll("players", data = this.playerData)
+}
+
+function printMyPiece(name) {
+    this.players.find((element) => element.name == name).addPieceToGrid()
+    this.players.find((element) => element.name == name).sendMyInfo()
+    // this.sendToAll("players", data = this.playerData)
+}
+
+function moveMyPiece(name) {
+    var player = this.players.find((element) => element.name == name)
+    player.removePieceToGrid()
+    player.piece.changePosition([3, (player.piece.position[1] + 4) % 20 - 3])
+    player.addPieceToGrid()
+    player.sendMyInfo()
+    this.sendToAll("players", data = this.playerData)
 }
 
 function    publicPlayersData(){
@@ -109,33 +130,10 @@ function    sendPlayersOwnGrid(){
     });
 }
 
-// function    otherPlayersData(player){
-//     var otherPlayersData = []
-
-//     this.players.forEach(other => {
-//         if (other != player) {
-//             let copyPlayer = {... other}
-//             delete copyPlayer.socket
-//             otherPlayersData.push(copyPlayer)
-//         }
-//     })
-//     return otherPlayersData
-// }
-
 function sendToAll(tag, data) {
-    if (tag === "other") {
-        data = this.publicPlayersData()
-        this.players.forEach(player => {
-            player.socket.emit(tag, data)
-            
-        });
-    }
-    else {
-        this.players.forEach(player => {
-            player.socket.emit(tag, data)
-        });
-    }
-    console.log("end SentToAll")
+    this.players.forEach(player => {
+        player.socket.emit(tag, data, player.grid)
+    });
 }
 
 module.exports = Game;

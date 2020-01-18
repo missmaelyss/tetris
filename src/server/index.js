@@ -27,13 +27,16 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("changeColor", () => {
-    currentGame.changeColorGame()
+  socket.on("changeColor", ({name}) => {
+    currentGame.changeColorGame(name)
   });
 
   socket.on("changeMyColor", ({name}) => {
     currentGame.changeMyColor(name)
   });
 
+  socket.on("moveDown", ({name}) => {
+    currentGame.moveMyPiece(name)
+  });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

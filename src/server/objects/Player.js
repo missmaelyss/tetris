@@ -1,54 +1,69 @@
+const Piece = require("./Piece");
+
 function Player(name, permission, socket){
     this.name = name,
+    this.color = 0
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
     this.classement = 1 // 0 = default, 1 = winner, else classement 
-    this.grid = createEmptyGrid()
+    this.grid = new Array(200).fill(this.color)
+
+    this.piece = new Piece()
+    this.piece.changePosition([3, -4])
+    // this.grid = createEmptyGrid()
 
     // MAE
     this.changeColorGrid = changeColorGrid
     this.sendMyInfo = sendMyInfo
 
-    this.sendMyInfo()
-}
+    this.addPieceToGrid = addPieceToGrid
+    this.removePieceToGrid = removePieceToGrid
 
-function createEmptyGrid() {
-    let     i = 0;
-    let     grid = []
-    let     line = []
-    while (i < 10)
-    {
-        line.push(7)
-        i++;
-    }
-    i = 0;
-    while (i < 20)
-    {
-        grid.push(line)
-        i++;
-    }
-    return grid;
+    // this.sendMyInfo()
 }
 
 function changeColorGrid() {
     let     i = 0;
-    let     grid = []
-    let     line = []
+    this.color = this.grid[0] % 7 + 1
 
-    const color = this.grid[0][0] % 7 + 1
-
-    while (i < 10)
+    while (i < 200)
     {
-        line.push(color)
+        this.grid[i] = this.color
         i++;
     }
-    i = 0;
-    while (i < 20)
+}
+function removePieceToGrid() {
+    var i = 0
+    while (i < 4)
     {
-        grid.push(line)
-        i++;
-    }
-    this.grid = grid;
+        var l = 0
+        while (l < 4)
+        {
+            if (this.piece.grid[i][l])
+            {
+                this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] = (this.color)
+            }
+            l++
+        }
+        i++
+    } 
+}
+
+function addPieceToGrid() {
+    var i = 0
+    while (i < 4)
+    {
+        var l = 0
+        while (l < 4)
+        {
+            if (this.piece.grid[i][l])
+            {
+                this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] = (this.piece.color)
+            }
+            l++
+        }
+        i++
+    } 
 }
 
 function sendMyInfo() {

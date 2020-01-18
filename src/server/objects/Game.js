@@ -87,7 +87,6 @@ function changeColorGame(name) {
         player.changeColorGrid()
     });
     this.players.find((element) => element.name == name).sendMyInfo()
-    console.log("Change Color Button Pushed")
     this.sendToAll("players", data = this.playerData)
 }
 

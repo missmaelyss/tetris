@@ -31,7 +31,9 @@ function changeColorGrid() {
         this.grid[i] = this.color
         i++;
     }
+    this.addPieceToGrid()
 }
+
 function removePieceToGrid() {
     var i = 0
     while (i < 4)

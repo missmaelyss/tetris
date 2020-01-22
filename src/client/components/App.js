@@ -54,12 +54,13 @@ const App = () => {
       <div id="real"><Grid grid={myGrid} other="real" /></div>
       <div id="other">{otherGrid}</div>
       <div id="button">
-        <button onClick={() => socket.emit('changeColor', {name: name})}>Change All Color</button>
-        <button onClick={() => socket.emit('changeMyColor', {name: name})}>Change My Color</button>
+        {/* <button onClick={() => socket.emit('changeColor', {name: name})}>Change All Color</button> */}
+        {/* <button onClick={() => socket.emit('changeMyColor', {name: name})}>Change My Color</button> */}
         <button onClick={() => socket.emit('moveDown', {name: name})}>Move Down</button>
-        <button onClick={() => socket.emit('move', {name: name, direction: -1})}>Move Down</button>
-        <button onClick={() => socket.emit('move', {name: name, direction: 1})}>Move Down</button>
-        <button onClick={() => socket.emit('move', {name: name, direction: 0})}>Move Down</button>
+        <button onClick={() => socket.emit('move', {name: name, direction: -1})}>←</button>
+        <button onClick={() => socket.emit('move', {name: name, direction: 1})}>→</button>
+        <button onClick={() => socket.emit('move', {name: name, direction: 0})}>↓</button>
+        <button onClick={() => socket.emit('pause', {name: name})}>Pause</button>
       </div>
     </div>
   );

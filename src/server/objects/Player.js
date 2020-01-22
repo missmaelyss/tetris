@@ -2,7 +2,7 @@ const Piece = require("./Piece");
 
 function Player(name, permission, socket){
     this.name = name,
-    this.color = 0
+    this.color = 7
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
     this.classement = 0 // 0 = default, 1 = winner, else classement 
@@ -13,6 +13,12 @@ function Player(name, permission, socket){
     this.sendMyInfo = sendMyInfo
     this.addPieceToGrid = addPieceToGrid
     this.removePieceToGrid = removePieceToGrid
+    this.pause = false
+    this.switchPause = switchPause
+}
+
+function switchPause() {
+    this.pause = !this.pause
 }
 
 function changeColorGrid() {

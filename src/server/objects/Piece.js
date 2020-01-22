@@ -1,5 +1,5 @@
 function Piece() {
-    this.color = 5
+    this.color = Math.floor(Math.random() * Math.floor(7))
     this.grid = generateGrid()
     this.position = [3, -1 * this.grid.length]
     this.changeXPosition = changeXPosition

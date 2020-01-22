@@ -17,6 +17,7 @@ function Game(roomId, creator, socket) {
     this.printMyPiece = printMyPiece
     this.moveMyPiece = moveMyPiece
     this.move = move
+    this.pause = pause
 
 
     //test Mae
@@ -50,7 +51,7 @@ function leaveRoom(name) {
 
 function gameTick(){
     this.players.forEach((player) => {
-        console.log(player.piece.position[1] + player.piece.grid.length)
+        // console.log(player.piece.position[1] + player.piece.grid.length)
         if (player.piece.position[1] + player.piece.grid.length > 19){
             delete player.piece;
             player.piece = new Piece;
@@ -58,7 +59,7 @@ function gameTick(){
         this.moveMyPiece(player.name)
 
     })
-    console.log("tick")
+    // console.log("tick")
 }
 
 function gameLoop(){
@@ -111,6 +112,8 @@ function printMyPiece(name) {
 
 function moveMyPiece(name) {
     var player = this.players.find((element) => element.name == name)
+    if (player.pause)
+        return
     player.removePieceToGrid()
     player.piece.changeYPosition(-1)
     player.addPieceToGrid()
@@ -120,11 +123,18 @@ function moveMyPiece(name) {
 
 function move(name, direction) {
     var player = this.players.find((element) => element.name == name)
+    if (player.pause)
+        return
     player.removePieceToGrid();
     (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
     player.addPieceToGrid()
     player.sendMyInfo()
     this.sendToAll("players", data = this.playerData)
+}
+
+function pause(name) {
+    var player = this.players.find((element) => element.name == name)
+    player.switchPause()
 }
 
 function    publicPlayersData(){

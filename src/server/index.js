@@ -41,5 +41,8 @@ io.on("connection", socket => {
   socket.on("move", ({name, direction}) => {
     currentGame.move(name, direction)
   });
+  socket.on("pause", ({name}) => {
+    currentGame.pause(name)
+  });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

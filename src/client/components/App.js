@@ -56,7 +56,7 @@ const App = () => {
       <div id="button">
         {/* <button onClick={() => socket.emit('changeColor', {name: name})}>Change All Color</button> */}
         {/* <button onClick={() => socket.emit('changeMyColor', {name: name})}>Change My Color</button> */}
-        <button onClick={() => socket.emit('moveDown', {name: name})}>Move Down</button>
+        {/* <button onClick={() => socket.emit('moveDown', {name: name})}>Move Down</button> */}
         <button onClick={() => socket.emit('move', {name: name, direction: -1})}>←</button>
         <button onClick={() => socket.emit('move', {name: name, direction: 1})}>→</button>
         <button onClick={() => socket.emit('move', {name: name, direction: 0})}>↓</button>

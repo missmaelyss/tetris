@@ -15,10 +15,37 @@ function Player(name, permission, socket){
     this.removePieceToGrid = removePieceToGrid
     this.pause = false
     this.switchPause = switchPause
+    this.checkPiece = checkPiece
+
 }
 
 function switchPause() {
     this.pause = !this.pause
+}
+
+function checkPiece(){
+    this.piece.touchLeft = false
+    this.piece.touchRight = false
+
+    var i = 0
+    while (i < this.piece.grid.length)
+    {
+        var l = 0
+        while (l < this.piece.grid[0].length)
+        {
+            if (this.piece.grid[i][l])
+            {
+                if (l == 0 && (this.piece.position[0] == 0 || this.grid[l + this.piece.position[0] - 1 + (i + this.piece.position[1]) * 10] != 7))
+                    this.piece.touchLeft = true
+                if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l == 9 || this.grid[l + this.piece.position[0] + 1 + (i + this.piece.position[1]) * 10] != 7))
+                    this.piece.touchRight = true
+                if ((i + this.piece.position[1]) * 10 >= 190 || this.grid[l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10] != 7)
+                    this.piece.touchBottom = true
+            }
+            l++
+        }
+        i++
+    }
 }
 
 function changeColorGrid() {

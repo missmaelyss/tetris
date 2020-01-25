@@ -9,6 +9,9 @@ function Piece(pieceId, rotation) {
     this.changeYPosition = changeYPosition
     this.rotate = rotate
     this.position = [3, -1 * this.grid.length]
+    this.touchLeft = false
+    this.touchRight = false
+    this.touchBottom = false
     return this;
 }
 
@@ -25,9 +28,9 @@ function generateGrid(pieceId, rotation) {
 function changeXPosition(direction) {
     direction = parseInt(direction)
     //direction: -1 = left 1 = right
-    if (direction == -1 && (this.position[0] == 0))
+    if (direction == -1 && this.touchLeft)
         return;
-    else if (direction == 1 && (this.grid[0].length + this.position[0] == 10))
+    else if (direction == 1 && this.touchRight)
         return
     this.position[0] += parseInt(direction)
 }

@@ -3,8 +3,8 @@ import React from 'react'
 import Tail from './Tail'
 import './Grid.css'
 
-const COLORS = ["red", "yellow", "green",
- "blue", "orange", "dark-blue", "violet", "white"]
+const COLORS = ["white","red", "yellow", "green",
+ "blue", "orange", "dark-blue", "violet"]
 
 const Grid = ({ grid, other }) => (
     <div className={`grid ${other}`}>

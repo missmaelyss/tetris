@@ -4,7 +4,7 @@ const Piece = require("./Piece");
 function Game(roomId, creator, socket) {
     this.roomId = roomId,
     this.status = "waiting",
-    this.players = [new Player(creator, 2, socket)]
+    this.players = [new Player(creator, 2, socket, roomId)]
     this.playerData = []
     this.publicPlayersData = publicPlayersData
     this.joinRoom = joinRoom
@@ -18,6 +18,7 @@ function Game(roomId, creator, socket) {
     this.moveMyPiece = moveMyPiece
     this.move = move
     this.pause = pause
+    this.rotate = rotate
 
 
     //test Mae
@@ -33,7 +34,7 @@ function Game(roomId, creator, socket) {
 function joinRoom(name, socket){
     //TODO: need to check if the username is taken
     
-    this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket))
+    this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket, this.roomId))
 
     console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
     this.playerData = this.publicPlayersData()
@@ -50,15 +51,13 @@ function leaveRoom(name) {
 
 function gameTick(){
     this.players.forEach((player) => {
-        // console.log(player.piece.position[1] + player.piece.grid.length)
         if (player.piece.position[1] + player.piece.grid.length > 19){
             delete player.piece;
-            player.piece = new Piece;
+            player.piece = player.newPiece();
         }
         this.moveMyPiece(player.name)
 
     })
-    // console.log("tick")
 }
 
 function gameLoop(){
@@ -125,7 +124,10 @@ function move(name, direction) {
     if (player.pause)
         return
     player.removePieceToGrid();
-    (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
+    if (direction == 2)
+        this.rotate(name)
+    else
+        (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
     player.addPieceToGrid()
     player.sendMyInfo()
     this.sendToAll("players", data = this.playerData)
@@ -135,6 +137,12 @@ function pause(name) {
     var player = this.players.find((element) => element.name == name)
     player.switchPause()
 }
+
+function rotate(name) {
+    var player = this.players.find((element) => element.name == name)
+    player.piece.rotate()
+}
+
 
 function    publicPlayersData(){
     var publicPlayersData = []

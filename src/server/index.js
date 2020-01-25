@@ -23,7 +23,6 @@ io.on("connection", socket => {
       delete currentGame;
       console.log("Room #" + socket.handshake.query.room + " closed because it was empty")
       Games.splice(Games.indexOf((element) => element.roomId == socket.handshake.query.room))
-      console.log(Games)
     }
   });
 
@@ -47,6 +46,9 @@ io.on("connection", socket => {
   });
   socket.on("pause", ({name}) => {
     currentGame.pause(name)
+  });
+  socket.on("rotate", ({name}) => {
+    currentGame.move(name, 2)
   });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

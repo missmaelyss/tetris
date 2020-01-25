@@ -1,14 +1,34 @@
 const Piece = require("./Piece");
+const PiecePool = [[[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]],[[[2,2],[2,2]]],[[[0,3,3],[3,3,0]],[[3,0],[3,3],[0,3]]],[[[4,4,4,4]],[[4],[4],[4],[4]]],[[[0,0,5],[5,5,5]],[[5,0],[5,0],[5,5]],[[5,5,5],[5,0,0]],[[5,5],[0,5],[0,5]]],[[[6,0,0],[6,6,6]],[[6,6],[6,0],[6,0]],[[6,6,6],[0,0,6]],[[0,6],[0,6],[6,6]]],[
+    [
+        [0,7,0],
+        [7,7,7]
+    ],[
+        [7,0],
+        [7,7],
+        [7,0]
+    ],[
+        [7,7,7],
+        [0,7,0]
+    ],[
+        [0,7],
+        [7,7],
+        [0,7]
+    ]
+]];
 
-function Player(name, permission, socket){
+function Player(name, permission, socket, room){
     this.name = name,
     this.color = 7
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
     this.classement = 0 // 0 = default, 1 = winner, else classement 
     this.grid = new Array(200).fill(this.color)
-    this.piece = new Piece()
+    this.seed = require('random-seed').create(room)
+    this.newPiece = newPiece
+    this.piece = this.newPiece()
     // MAE
+    this.seed = require('random-seed').create(room)
     this.changeColorGrid = changeColorGrid
     this.sendMyInfo = sendMyInfo
     this.addPieceToGrid = addPieceToGrid
@@ -35,10 +55,10 @@ function changeColorGrid() {
 
 function removePieceToGrid() {
     var i = 0
-    while (i < 4)
+    while (i < this.piece.grid.length)
     {
         var l = 0
-        while (l < 4)
+        while (l < this.piece.grid[0].length)
         {
             if (this.piece.grid[i][l])
             {
@@ -52,10 +72,10 @@ function removePieceToGrid() {
 
 function addPieceToGrid() {
     var i = 0
-    while (i < 4)
+    while (i < this.piece.grid.length)
     {
         var l = 0
-        while (l < 4)
+        while (l < this.piece.grid[0].length)
         {
             if (this.piece.grid[i][l])
             {
@@ -65,6 +85,12 @@ function addPieceToGrid() {
         }
         i++
     } 
+}
+
+function newPiece(){
+    let pieceId = this.seed(PiecePool.length)
+    let rotation = this.seed(PiecePool[pieceId].length)
+    return(new Piece(pieceId, rotation))
 }
 
 function sendMyInfo() {

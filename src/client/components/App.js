@@ -41,6 +41,8 @@ const App = () => {
         direction: (event.key === "ArrowLeft" ? -1 : 1)
       })
     }
+    else if (event.key === "ArrowUp")
+      socket.emit('rotate', {name:name})
     else {
       keyReady = true
       return;
@@ -62,6 +64,7 @@ const App = () => {
         <button onClick={() => socket.emit('move', {name: name, direction: 0})}>↓</button>
         <button onClick={() => socket.emit('pause', {name: name})}>Pause</button>
         <button onClick={() => socket.emit('start', {name: name})}>Start Game</button>
+        <button onClick={() => socket.emit('rotate', {name: name})}>Rotate</button>
       </div>
     </div>
   );

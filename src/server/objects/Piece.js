@@ -1,7 +1,7 @@
 const PiecePool = [[[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]],[[[2,2],[2,2]]],[[[0,3,3],[3,3,0]],[[3,0],[3,3],[0,3]]],[[[4,4,4,4]],[[4],[4],[4],[4]]],[[[0,0,5],[5,5,5]],[[5,0],[5,0],[5,5]],[[5,5,5],[5,0,0]],[[5,5],[0,5],[0,5]]],[[[6,0,0],[6,6,6]],[[6,6],[6,0],[6,0]],[[6,6,6],[0,0,6]],[[0,6],[0,6],[6,6]]],[[[0,7,0],[7,7,7]],[[7,0],[7,7],[7,0]],[[7,7,7],[0,7,0]],[[0,7],[7,7],[0,7]]]];
 
 function Piece(pieceId, rotation) {
-    this.color = Math.floor(Math.random() * Math.floor(7))
+    this.color = Math.floor(Math.random() * Math.floor(6)) + 1
     this.grid = generateGrid(pieceId, rotation)
     this.pieceId = pieceId
     this.pieceRot = rotation

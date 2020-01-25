@@ -19,7 +19,7 @@ const PiecePool = [[[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]],[[[2,2],[2,2]]],[[[0,
 
 function Player(name, permission, socket, room){
     this.name = name,
-    this.color = 7
+    this.color = 0
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
     this.classement = 0 // 0 = default, 1 = winner, else classement 
@@ -46,6 +46,7 @@ function switchPause() {
 function checkPiece(){
     this.piece.touchLeft = false
     this.piece.touchRight = false
+    this.piece.touchBottom = false
 
     var i = 0
     while (i < this.piece.grid.length)
@@ -55,11 +56,11 @@ function checkPiece(){
         {
             if (this.piece.grid[i][l])
             {
-                if (l == 0 && (this.piece.position[0] == 0 || this.grid[l + this.piece.position[0] - 1 + (i + this.piece.position[1]) * 10] != 7))
+                if (l == 0 && (this.piece.position[0] == 0 || this.grid[l + this.piece.position[0] - 1 + (i + this.piece.position[1]) * 10] != 0))
                     this.piece.touchLeft = true
-                if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l == 9 || this.grid[l + this.piece.position[0] + 1 + (i + this.piece.position[1]) * 10] != 7))
+                if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l == 9 || this.grid[l + this.piece.position[0] + 1 + (i + this.piece.position[1]) * 10] != 0))
                     this.piece.touchRight = true
-                if ((i + this.piece.position[1]) * 10 >= 190 || this.grid[l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10] != 7)
+                if ((i + this.piece.position[1]) * 10 >= 190 || this.grid[l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10] != 0 && (i == this.piece.grid.length - 1 || this.piece.grid[i + 1][l] == 0))
                     this.piece.touchBottom = true
             }
             l++

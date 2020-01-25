@@ -35,6 +35,10 @@ io.on("connection", socket => {
     currentGame.changeMyColor(name)
   });
 
+  socket.on("start", ({name}) => {
+    currentGame.startGame(name);
+  })
+
   socket.on("moveDown", ({name, direction}) => {
     currentGame.moveMyPiece(name, direction)
   });

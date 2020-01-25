@@ -27,7 +27,6 @@ function Game(roomId, creator, socket) {
     console.log(creator, "opened the room #" + roomId)
     this.players[0].sendMyInfo()
     // this.piece.changePosition([3, -3])
-    setTimeout(()=> {this.startGame(creator)}, 8000)
     return this;
 }
 

@@ -61,6 +61,7 @@ const App = () => {
         <button onClick={() => socket.emit('move', {name: name, direction: 1})}>→</button>
         <button onClick={() => socket.emit('move', {name: name, direction: 0})}>↓</button>
         <button onClick={() => socket.emit('pause', {name: name})}>Pause</button>
+        <button onClick={() => socket.emit('start', {name: name})}>Start Game</button>
       </div>
     </div>
   );

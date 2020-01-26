@@ -17,7 +17,8 @@ Tail.propTypes = {
         'orange',
         'dark-blue',
         'violet',
-        'white'
+        'white',
+        'grey'
     ]).isRequired,
 }
 export default Tail

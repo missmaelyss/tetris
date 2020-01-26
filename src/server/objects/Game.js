@@ -42,12 +42,16 @@ function leaveRoom(name) {
 
 function gameTick(){
     this.players.forEach((player) => {
-        if (player.piece.stop){
-            delete player.piece;
-            player.checkLines();
-            player.piece = player.newPiece();
+        if(player.status == 0) {
+            if (player.piece.stop){
+                delete player.piece;
+                player.checkLines();
+                player.piece = player.newPiece();
+            }
+            this.move(player.name, 0)
         }
-        this.move(player.name, 0)
+        else
+            player.changeColorGrid()
     })
 }
 
@@ -61,7 +65,7 @@ function gameLoop(){
         else {
             this.gameTick()
         }
-    }, 1000);
+    }, 500);
 }
 
 function startGame(name) {

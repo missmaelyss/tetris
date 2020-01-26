@@ -23,6 +23,7 @@ function Player(name, permission, socket, room){
     this.checkBottom = checkBottom
     this.checkLines = checkLines
     this.score = 0;
+    this.status = 0 // 0 current, 1 over
 }
 
 function checkLines(){
@@ -61,10 +62,17 @@ function checkBottom() {
         var l = 0
         while (l < this.piece.grid[0].length)
         {
-            if (this.piece.grid[i][l] && l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0)
+            if (this.piece.grid[i][l] && l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10 >= 0)
             {
                 if ((i + this.piece.position[1]) * 10 >= 190 || this.grid[l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10] != 0 && (i == this.piece.grid.length - 1 || this.piece.grid[i + 1][l] == 0))
+                {
                     this.piece.stop = true
+                    if (l + this.piece.position[0] + (i + this.piece.position[1]) * 10 < 0)
+                    {
+                        this.status = 1
+                        this.changeColorGrid()
+                    }
+                }
             }
             l++
         }
@@ -81,14 +89,14 @@ function checkPiece() {
         var l = 0
         while (l < this.piece.grid[0].length)
         {
-            if (this.piece.grid[i][l] && l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0)
+            if (this.piece.grid[i][l])
             {
                 if ((i + this.piece.position[1]) * 10 >= 200)
                 {
                     // console.log("trop en bas")
                     return (0)
                 }
-                if (this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0)
+                if (l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0 && this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0)
                 {
                     // console.log("touche une autre piece")
                     return (0)
@@ -148,14 +156,14 @@ function checkPiece() {
 
 function changeColorGrid() {
     let     i = 0;
-    this.color = this.grid[0] % 7 + 1
+    this.color = 8
 
     while (i < 200)
     {
-        this.grid[i] = this.color
+        if (this.grid[i] == 0)
+            this.grid[i] = this.color
         i++;
     }
-    this.addPieceToGrid()
 }
 
 function removePieceToGrid() {

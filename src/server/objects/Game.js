@@ -44,6 +44,7 @@ function gameTick(){
     this.players.forEach((player) => {
         if (player.piece.stop){
             delete player.piece;
+            player.checkLines();
             player.piece = player.newPiece();
         }
         this.move(player.name, 0)

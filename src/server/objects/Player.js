@@ -1,21 +1,5 @@
 const Piece = require("./Piece");
-const PiecePool = [[[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]],[[[2,2],[2,2]]],[[[0,3,3],[3,3,0]],[[3,0],[3,3],[0,3]]],[[[4,4,4,4]],[[4],[4],[4],[4]]],[[[0,0,5],[5,5,5]],[[5,0],[5,0],[5,5]],[[5,5,5],[5,0,0]],[[5,5],[0,5],[0,5]]],[[[6,0,0],[6,6,6]],[[6,6],[6,0],[6,0]],[[6,6,6],[0,0,6]],[[0,6],[0,6],[6,6]]],[
-    [
-        [0,7,0],
-        [7,7,7]
-    ],[
-        [7,0],
-        [7,7],
-        [7,0]
-    ],[
-        [7,7,7],
-        [0,7,0]
-    ],[
-        [0,7],
-        [7,7],
-        [0,7]
-    ]
-]];
+const PiecePool = [[[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]],[[[2,2],[2,2]]],[[[0,3,3],[3,3,0]],[[3,0],[3,3],[0,3]]],[[[4,4,4,4]],[[4],[4],[4],[4]]],[[[0,0,5],[5,5,5]],[[5,0],[5,0],[5,5]],[[5,5,5],[5,0,0]],[[5,5],[0,5],[0,5]]],[[[6,0,0],[6,6,6]],[[6,6],[6,0],[6,0]],[[6,6,6],[0,0,6]],[[0,6],[0,6],[6,6]]],[[[0,7,0],[7,7,7]],[[7,0],[7,7],[7,0]],[[7,7,7],[0,7,0]],[[0,7],[7,7],[0,7]]]];
 
 function Player(name, permission, socket, room){
     this.name = name,
@@ -36,7 +20,34 @@ function Player(name, permission, socket, room){
     this.pause = false
     this.switchPause = switchPause
     this.checkPiece = checkPiece
+    this.checkLines = checkLines
+    this.score = 0;
 
+}
+
+function checkLines(){
+    let i = 0;
+    let lineCount = 0;
+    while (i < 20){
+        let current = this.grid.slice(i * 10, (i + 1) * 10)
+        if (!(current.some((element) => element === 0))){
+            this.grid.splice(i * 10, 10)
+            this.grid.unshift(0,0,0,0,0,0,0,0,0,0)
+            lineCount++;
+        } else if (lineCount != 0) {
+            if (lineCount == 1)
+                this.score += 40
+            else if (lineCount == 2)
+                this.score += 100
+            else if (lineCount == 3)
+                this.score += 300
+            else if (lineCount == 4)
+                this.score += 1200
+            lineCount = 0;
+        }
+        i++;
+
+    }
 }
 
 function switchPause() {

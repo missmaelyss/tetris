@@ -50,13 +50,12 @@ function leaveRoom(name) {
 
 function gameTick(){
     this.players.forEach((player) => {
-        // console.log(player.piece.position[1] + player.piece.grid.length)
         if (player.piece.touchBottom ){
             delete player.piece;
+            player.checkLines();
             player.piece = player.newPiece();
         }
         this.move(player.name, 0)
-
     })
 }
 

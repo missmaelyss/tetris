@@ -14,19 +14,11 @@ function Game(roomId, creator, socket) {
     this.sendPlayersOwnGrid = sendPlayersOwnGrid
     this.gameLoop = gameLoop
     this.gameTick = gameTick
-    this.printMyPiece = printMyPiece
     this.move = move
     this.pause = pause
-    this.rotate = rotate
-
-
-    //test Mae
-    this.changeColorGame = changeColorGame
-    this.changeMyColor = changeMyColor
 
     console.log(creator, "opened the room #" + roomId)
     this.players[0].sendMyInfo()
-    // this.piece.changePosition([3, -3])
     return this;
 }
 
@@ -50,13 +42,11 @@ function leaveRoom(name) {
 
 function gameTick(){
     this.players.forEach((player) => {
-        // console.log(player.piece.position[1] + player.piece.grid.length)
-        if (player.piece.touchBottom ){
+        if (player.piece.stop){
             delete player.piece;
             player.piece = player.newPiece();
         }
         this.move(player.name, 0)
-
     })
 }
 
@@ -87,39 +77,24 @@ function startGame(name) {
     this.gameLoop()
 }
 
-function changeColorGame(name) {
-    this.players.forEach(player => {
-        player.changeColorGrid()
-    });
-    this.players.find((element) => element.name == name).sendMyInfo()
-    this.sendToAll("players", data = this.playerData)
-}
-
-function changeMyColor(name) {
-    this.players.find((element) => element.name == name).changeColorGrid()
-    // this.players.find((element) => element.name == name).addPieceToGrid(this.piece)
-    this.players.find((element) => element.name == name).sendMyInfo()
-    this.sendToAll("players", data = this.playerData)
-}
-
-function printMyPiece(name) {
-    this.players.find((element) => element.name == name).addPieceToGrid()
-    this.players.find((element) => element.name == name).sendMyInfo()
-    // this.sendToAll("players", data = this.playerData)
-}
-
 function move(name, direction) {
+    // 0 = bas, direction: -1 = left 1 = right, 2 = rotate
     var player = this.players.find((element) => element.name == name)
     if (player.pause)
         return
-    player.checkPiece()
-    if (player.piece.touchBottom && !direction)
-        return
     player.removePieceToGrid();
+    var testPiece = new Piece(player.piece.pieceId, player.piece.pieceRot)
+    testPiece.color = player.piece.color
+    testPiece.position[0] = player.piece.position[0]
+    testPiece.position[1] = player.piece.position[1]
+    testPiece.stop = false
     if (direction == 2)
-        this.rotate(name)
+        player.piece.rotate()
     else
         (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
+    if (!player.checkPiece())
+        player.piece = testPiece
+    player.checkBottom()
     player.addPieceToGrid()
     player.sendMyInfo()
     this.sendToAll("players", data = this.playerData)
@@ -129,12 +104,6 @@ function pause(name) {
     var player = this.players.find((element) => element.name == name)
     player.switchPause()
 }
-
-function rotate(name) {
-    var player = this.players.find((element) => element.name == name)
-    player.piece.rotate()
-}
-
 
 function    publicPlayersData(){
     var publicPlayersData = []

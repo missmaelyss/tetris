@@ -36,6 +36,7 @@ function Player(name, permission, socket, room){
     this.pause = false
     this.switchPause = switchPause
     this.checkPiece = checkPiece
+    this.checkBottom = checkBottom
 
 }
 
@@ -43,31 +44,97 @@ function switchPause() {
     this.pause = !this.pause
 }
 
-function checkPiece(){
-    this.piece.touchLeft = false
-    this.piece.touchRight = false
-    this.piece.touchBottom = false
-
+function checkBottom() {
     var i = 0
     while (i < this.piece.grid.length)
     {
         var l = 0
         while (l < this.piece.grid[0].length)
         {
-            if (this.piece.grid[i][l])
+            if (this.piece.grid[i][l] && l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0)
             {
-                if (l == 0 && (this.piece.position[0] == 0 || this.grid[l + this.piece.position[0] - 1 + (i + this.piece.position[1]) * 10] != 0))
-                    this.piece.touchLeft = true
-                if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l == 9 || this.grid[l + this.piece.position[0] + 1 + (i + this.piece.position[1]) * 10] != 0))
-                    this.piece.touchRight = true
                 if ((i + this.piece.position[1]) * 10 >= 190 || this.grid[l + this.piece.position[0] + (i + 1 + this.piece.position[1]) * 10] != 0 && (i == this.piece.grid.length - 1 || this.piece.grid[i + 1][l] == 0))
-                    this.piece.touchBottom = true
+                    this.piece.stop = true
             }
             l++
         }
         i++
     }
 }
+
+function checkPiece() {
+
+    var i = 0
+    this.piece.stop = false
+    while (i < this.piece.grid.length)
+    {
+        var l = 0
+        while (l < this.piece.grid[0].length)
+        {
+            if (this.piece.grid[i][l] && l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0)
+            {
+                if ((i + this.piece.position[1]) * 10 >= 200)
+                {
+                    // console.log("trop en bas")
+                    return (0)
+                }
+                if (this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0)
+                {
+                    // console.log("touche une autre piece")
+                    return (0)
+                }
+                if (l == 0 && (this.piece.position[0] < 0))
+                {
+                    // console.log("trop a gauche")
+                    return (0)
+                }
+                if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l > 9))
+                {
+                    // console.log("trop a droite")
+                    return (0)
+                }
+                
+            }
+            l++
+        }
+        i++
+    }
+    return (1)
+}
+
+// function checkRotate(){
+//     this.piece.touchBottom = false
+
+//     var i = 0
+//     while (i < this.piece.grid.length)
+//     {
+//         var l = 0
+//         while (l < this.piece.grid[0].length)
+//         {
+//             if (this.piece.grid[i][l])
+//             {
+//                 if (l == 0 && (this.piece.position[0] < 0 || this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0))
+//                 {
+//                     console.log("LEFT")
+//                     return (0)
+//                 }
+//                 if (l == this.piece.grid[0].length - 1 && (this.piece.position[0] + l > 9 || this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0))
+//                 {
+//                     console.log("RIGHT")
+//                     return (0)
+//                 }    
+//                 if ((i + this.piece.position[1]) * 10 >= 200 || this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0)
+//                 {
+//                     console.log("BOTTOM")
+//                     return (0)
+//                 }    
+//             }
+//             l++
+//         }
+//         i++
+//     }
+//     return (1)
+// }
 
 function changeColorGrid() {
     let     i = 0;

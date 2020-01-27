@@ -87,8 +87,16 @@ function checkLines(){
             lineCount = 0;
         }
         i++;
-
     }
+    if (lineCount == 1)
+        this.score += 40
+    else if (lineCount == 2)
+        this.score += 100
+    else if (lineCount == 3)
+        this.score += 300
+    else if (lineCount == 4)
+        this.score += 1200
+    lineCount = 0;
 }
 
 function switchPause() {

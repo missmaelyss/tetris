@@ -48,11 +48,16 @@ function gameTick(){
                 player.checkLines();
                 player.piece = player.newPiece();
             }
-            this.move(player.name, 0)
+            else
+            {
+                if (!player.pause)
+                    this.move(player.name, 0)
+            }
         }
         else
             player.changeColorGrid()
     })
+    this.sendToAll("players", data = this.playerData)
 }
 
 function gameLoop(){
@@ -82,27 +87,33 @@ function startGame(name) {
     this.gameLoop()
 }
 
-function move(name, direction) {
+ function move(name, direction) {
     // 0 = bas, direction: -1 = left 1 = right, 2 = rotate
     var player = this.players.find((element) => element.name == name)
-    if (player.pause)
-        return
+    // if (player.pause)
+    //     return
     player.removePieceToGrid();
     var testPiece = new Piece(player.piece.pieceId, player.piece.pieceRot)
     testPiece.color = player.piece.color
     testPiece.position[0] = player.piece.position[0]
     testPiece.position[1] = player.piece.position[1]
     testPiece.stop = false
-    if (direction == 2)
-        player.piece.rotate()
+    if (direction == 3)
+        player.down()
     else
-        (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
-    if (!player.checkPiece())
-        player.piece = testPiece
-    player.checkBottom()
+    {
+        if (direction == 2)
+            player.piece.rotate()
+        else
+            (direction === 0 ? player.piece.changeYPosition(-1) : player.piece.changeXPosition(direction))
+        if (!player.checkPiece())
+            player.piece = testPiece
+        player.checkBottom()
+    }
+    
     player.addPieceToGrid()
     player.sendMyInfo()
-    this.sendToAll("players", data = this.playerData)
+    // this.sendToAll("players", data = this.playerData)
 }
 
 function pause(name) {

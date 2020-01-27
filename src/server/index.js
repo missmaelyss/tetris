@@ -26,21 +26,9 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("changeColor", ({name}) => {
-    currentGame.changeColorGame(name)
-  });
-
-  socket.on("changeMyColor", ({name}) => {
-    currentGame.changeMyColor(name)
-  });
-
   socket.on("start", ({name}) => {
     currentGame.startGame(name);
   })
-
-  socket.on("moveDown", ({name, direction}) => {
-    currentGame.moveMyPiece(name, direction)
-  });
   socket.on("move", ({name, direction}) => {
     currentGame.move(name, direction)
   });
@@ -49,6 +37,9 @@ io.on("connection", socket => {
   });
   socket.on("rotate", ({name}) => {
     currentGame.move(name, 2)
+  });
+  socket.on("space", ({name}) => {
+    currentGame.move(name, 3)
   });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

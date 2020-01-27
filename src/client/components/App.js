@@ -3,7 +3,7 @@ import io from "socket.io-client"
 import './App.css'
 import Grid from './Grid'
 
-const endpoint = 'localhost:4001';
+const endpoint = '10.12.2.7:4001';
 const name = parseInt(Math.random()*1000).toString()
 const socket = io.connect(endpoint + '?room=1245&name='+ name);
 
@@ -27,6 +27,7 @@ const App = () => {
     socket.on('me',(me) => {
       setMyGrid(me.grid)
     });
+    // eslint-disable-next-line
   },0);
 
   function keyHandler(event){

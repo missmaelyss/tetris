@@ -4,7 +4,7 @@ import Tail from './Tail'
 import './Grid.css'
 
 const COLORS = ["white","red", "yellow", "green",
- "blue", "orange", "dark-blue", "violet"]
+ "blue", "orange", "dark-blue", "violet","grey"]
 
 const Grid = ({ grid, other }) => (
     <div className={`grid ${other}`}>

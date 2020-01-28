@@ -12,7 +12,7 @@ const io = socketIo(server); // < Interesting!
 let Games = [];
 
 io.on("connection", socket => {
-  let currentGame = Games.find(element => element.roomId = socket.handshake.query.room)
+  let currentGame = Games.find(element => element.roomId == socket.handshake.query.room)
   if (!currentGame)
     Games.push(currentGame = new Game(socket.handshake.query.room, socket.handshake.query.name, socket))
   else

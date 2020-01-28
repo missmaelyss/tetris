@@ -20,8 +20,6 @@ const Game = () => {
   const [otherGrid, setOtherGrid] = useState([])
 
   useEffect(() => {
-    document.title = `mdr`;
-    // let {room, username} = useParams();
     socket.on('players',(others, me) => {
       // setMyGrid(me)
       others.splice(others.findIndex((element) => element.name === username), 1)

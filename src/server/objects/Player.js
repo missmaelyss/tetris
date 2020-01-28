@@ -50,6 +50,7 @@ function Player(name, permission, socket, room){
     this.seed = require('random-seed').create(room)
     this.newPiece = newPiece
     this.piece = this.newPiece()
+
     // MAE
     this.seed = require('random-seed').create(room)
     this.changeColorGrid = changeColorGrid
@@ -64,6 +65,11 @@ function Player(name, permission, socket, room){
     this.down = down
     this.score = 0;
     this.status = 0 // 0 current, 1 over
+
+    this.nextGrid = new Array(16).fill(this.color)
+    this.nextPiece = this.newPiece()
+    this.NextGrid = NextGrid
+    this.NextGrid()
 }
 
 function checkLines(){
@@ -230,6 +236,34 @@ function addPieceToGrid() {
     } 
 }
 
+function NextGrid() {
+    var i = 0
+    while (i < 4)
+    {
+        var l = 0
+        while (l < 4)
+        {
+            this.nextGrid[l + i * 4] = this.color
+            l++
+        }
+        i++
+    }
+    var i = 0
+    while (i < this.nextPiece.grid.length)
+    {
+        var l = 0
+        while (l < this.nextPiece.grid[0].length)
+        {
+            if (this.nextPiece.grid[i][l])
+            {
+                this.nextGrid[l + i * 4] = (this.nextPiece.color)
+            }
+            l++
+        }
+        i++
+    }
+}
+
 function newPiece(){
     let pieceId = this.seed(PiecePool.length)
     let rotation = this.seed(PiecePool[pieceId].length)
@@ -237,7 +271,7 @@ function newPiece(){
 }
 
 function sendMyInfo() {
-    let me = {name: this.name, grid: this.grid}
+    let me = {name: this.name, grid: this.grid, score: this.score, piece: this.nextGrid}
     this.socket.emit('me', me)
 }
 

@@ -17,6 +17,8 @@ const Game = () => {
     socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
   }
   const [myGrid, setMyGrid] = useState([])
+  const [myScore, setMyScore] = useState([])
+  const [myPiece, setMyPiece] = useState([])
   const [otherGrid, setOtherGrid] = useState([])
 
   useEffect(() => {
@@ -26,13 +28,15 @@ const Game = () => {
       // setMyGrid(me)
       others.splice(others.findIndex((element) => element.name === username), 1)
       var element = others.map((other) => (
-        <Grid grid={other.grid} other="other"/>
+        <Grid grid={other.grid} type="other" score={other.score} piece={other.nextGrid}/>
       ))
       setOtherGrid(element)
     });
 
     socket.on('me',(me) => {
       setMyGrid(me.grid)
+      setMyScore(me.score)
+      setMyPiece(me.piece)
     });
     // eslint-disable-next-line
   },0);
@@ -63,7 +67,7 @@ const Game = () => {
   window.addEventListener("keydown", keyHandler)
   return (
     <div id="app">
-      <div id="real"><Grid grid={myGrid} other="real" /></div>
+      <div id="real"><Grid grid={myGrid} type="real" score={myScore} piece={myPiece}/></div>
       <div id="other">{otherGrid}</div>
       <div id="button">
         {/* <button onClick={() => socket.emit('changeColor', {name: username})}>Change All Color</button> */}

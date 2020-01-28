@@ -46,7 +46,9 @@ function gameTick(){
             if (player.piece.stop){
                 delete player.piece;
                 player.checkLines();
-                player.piece = player.newPiece();
+                player.piece = player.nextPiece;
+                player.nextPiece = player.newPiece();
+                player.NextGrid()
             }
             else
             {

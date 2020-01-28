@@ -1,3 +1,12 @@
+.player {
+    margin: auto;
+    text-align: center;
+}
+
+.score {
+    padding: 2px;
+}
+
 .grid {
     outline: 3px solid rgb(235, 235, 235);
     display: flex;
@@ -8,6 +17,10 @@
 
 .grid.real {
   width: 300px;
+}
+
+.grid.piece {
+  width: 100px;
 }
 
 .grid.other {

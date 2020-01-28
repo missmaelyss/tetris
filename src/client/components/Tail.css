@@ -9,6 +9,11 @@
     height: 30px;
 }
 
+.tail.piece {
+    flex: 1 1 calc(100% / 4);
+    height: 25px;
+}
+
 .tail.other {
     height: 5px;
 }

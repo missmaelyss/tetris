@@ -88,6 +88,8 @@ function startGame(name) {
 }
 
  function move(name, direction) {
+    if (this.status != 'started')
+        return
     // 0 = bas, direction: -1 = left 1 = right, 2 = rotate
     var player = this.players.find((element) => element.name == name)
     // if (player.pause)

@@ -7,3 +7,4 @@ coté client :
 coté server :
     - gerer l'envoie d'une seule grill a la fois quand elle change avec son id
     - gerer l'envoie asyncrhone pour les tick
+    - empecher de bouger la piece si la game n'as pas commencé

@@ -6,7 +6,6 @@ import {useParams} from 'react-router-dom'
 
 
 const endpoint = 'localhost:4001';
-const name = parseInt(Math.random()*1000).toString()
 let socket = false;
 
 let keyReady = true;
@@ -25,7 +24,7 @@ const Game = () => {
     // let {room, username} = useParams();
     socket.on('players',(others, me) => {
       // setMyGrid(me)
-      others.splice(others.findIndex((element) => element.name === name), 1)
+      others.splice(others.findIndex((element) => element.name === username), 1)
       var element = others.map((other) => (
         <Grid grid={other.grid} other="other"/>
       ))
@@ -43,17 +42,17 @@ const Game = () => {
     keyReady = false
 
     if (event.key === 'ArrowDown')
-      socket.emit('move', {name: name, direction: 0})
+      socket.emit('move', {name: username, direction: 0})
     else if (event.key === 'ArrowLeft' || event.key === "ArrowRight" ){
       socket.emit('move',{
-        name: name, 
+        name: username, 
         direction: (event.key === "ArrowLeft" ? -1 : 1)
       })
     }
     else if (event.key === " ")
-      socket.emit('space', {name:name})
+      socket.emit('space', {name:username})
     else if (event.key === "ArrowUp")
-      socket.emit('rotate', {name:name})
+      socket.emit('rotate', {name:username})
     else {
       keyReady = true
       return;
@@ -67,15 +66,15 @@ const Game = () => {
       <div id="real"><Grid grid={myGrid} other="real" /></div>
       <div id="other">{otherGrid}</div>
       <div id="button">
-        {/* <button onClick={() => socket.emit('changeColor', {name: name})}>Change All Color</button> */}
-        {/* <button onClick={() => socket.emit('changeMyColor', {name: name})}>Change My Color</button> */}
-        {/* <button onClick={() => socket.emit('moveDown', {name: name})}>Move Down</button> */}
-        <button onClick={() => socket.emit('move', {name: name, direction: -1})}>←</button>
-        <button onClick={() => socket.emit('move', {name: name, direction: 1})}>→</button>
-        <button onClick={() => socket.emit('move', {name: name, direction: 0})}>↓</button>
-        <button onClick={() => socket.emit('pause', {name: name})}>Pause</button>
-        <button onClick={() => socket.emit('start', {name: name})}>Start Game</button>
-        <button onClick={() => socket.emit('rotate', {name: name})}>Rotate</button>
+        {/* <button onClick={() => socket.emit('changeColor', {name: username})}>Change All Color</button> */}
+        {/* <button onClick={() => socket.emit('changeMyColor', {name: username})}>Change My Color</button> */}
+        {/* <button onClick={() => socket.emit('moveDown', {name: username})}>Move Down</button> */}
+        <button onClick={() => socket.emit('move', {name: username, direction: -1})}>←</button>
+        <button onClick={() => socket.emit('move', {name: username, direction: 1})}>→</button>
+        <button onClick={() => socket.emit('move', {name: username, direction: 0})}>↓</button>
+        <button onClick={() => socket.emit('pause', {name: username})}>Pause</button>
+        <button onClick={() => socket.emit('start', {name: username})}>Start Game</button>
+        <button onClick={() => socket.emit('rotate', {name: username})}>Rotate</button>
       </div>
     </div>
   );

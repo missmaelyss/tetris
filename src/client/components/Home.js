@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
@@ -10,6 +10,9 @@ import FormControl from 'react-bootstrap/FormControl'
 
 
 const Home = () => {
+  const [name, setName] = useState([])
+  const [room, setRoom] = useState([])
+
   return (
     <Container className="pt-5 h-100">
       <Row className="pb-5 h-100 justify-content-center align-items-center">
@@ -19,25 +22,27 @@ const Home = () => {
             <Card.Body text="black">
               <InputGroup className="mb-3">
                 <InputGroup.Prepend>
-                  <InputGroup.Text id="basic-addon1">Name</InputGroup.Text>
+                  <InputGroup.Text  id="basic-addon1">Name</InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   placeholder="Username"
                   aria-label="Username"
                   aria-describedby="basic-addon1"
+                  onChange={event => setName(event.target.value)}
                 />
               </InputGroup>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text id="basic-addon1"> #</InputGroup.Text>
+                      <InputGroup.Text onChange={event => setRoom(event.target.value)} id="basic-addon1"> #</InputGroup.Text>
                     </InputGroup.Prepend>
                     <FormControl
+                      onChange={event => setRoom(event.target.value)}
                       placeholder="Room"
                       aria-label="Room"
                       aria-describedby="basic-addon1"
                     />
                     <InputGroup.Append>
-                      <Link to={`/room/$(room)/$(username)`}><Button variant="outline-danger">Join</Button></Link>
+                      <Link to={`/${room}/${name}`}><Button variant="outline-danger">Join</Button></Link>
                       <Button variant="outline-danger">Create</Button>
                     </InputGroup.Append>
                   </InputGroup>

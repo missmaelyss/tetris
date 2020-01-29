@@ -3,7 +3,6 @@ import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
@@ -42,8 +41,7 @@ const Home = () => {
                       aria-describedby="basic-addon1"
                     />
                     <InputGroup.Append>
-                      <Link to={`/${room}/${name}`}><Button variant="outline-danger">Join</Button></Link>
-                      <Button variant="outline-danger">Create</Button>
+                      <Button disabled= {room.length === 0 || name.length === 0} href={`/${room}/${name}`} variant="outline-danger">Join</Button>
                     </InputGroup.Append>
                   </InputGroup>
             </Card.Body>

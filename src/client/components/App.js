@@ -11,9 +11,8 @@ const App = () => {
       <Router>
         <TopBar/>
         <Switch>
-          <Route path="/lobby"  >dddd</Route>
           <Route path="/:room/:username" exact component={Game}></Route>
-          <Route path="/" exact component={Home}/>
+          <Route path="/" component={Home}/>
         </Switch>
       </Router>
     </div>

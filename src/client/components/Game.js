@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import io from "socket.io-client"
 import './Game.css'
 import Grid from './Grid'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+
 import {useParams} from 'react-router-dom'
-
-
+import {Redirect} from 'react-router-dom'
 const endpoint = 'localhost:4001';
 let socket = false;
 
@@ -14,30 +16,40 @@ const Game = () => {
   let {room, username} = useParams();
 
   if (!socket){
+
     socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
   }
   const [myGrid, setMyGrid] = useState([])
   const [myScore, setMyScore] = useState([])
   const [myPiece, setMyPiece] = useState([])
   const [otherGrid, setOtherGrid] = useState([])
+  const [permission, setPermission] = useState([])
+
 
   useEffect(() => {
     socket.on('players',(others, me) => {
       // setMyGrid(me)
       others.splice(others.findIndex((element) => element.name === username), 1)
       var element = others.map((other) => (
-        <Grid grid={other.grid} type="other" score={other.score} piece={other.nextGrid}/>
+        <Col>
+          <Grid grid={other.grid} type="other" score={other.score} piece={other.nextGrid}/>
+        </Col>
       ))
       setOtherGrid(element)
     });
 
     socket.on('me',(me) => {
+      console.log(me)
       setMyGrid(me.grid)
       setMyScore(me.score)
       setMyPiece(me.piece)
+      setPermission(me.permission)
     });
     // eslint-disable-next-line
   },0);
+
+  if (!room || !username)
+    return(<Redirect to="/" />)
 
   function keyHandler(event){
     if (keyReady === false) { return; }
@@ -68,15 +80,10 @@ const Game = () => {
       <div id="real"><Grid grid={myGrid} type="real" score={myScore} piece={myPiece}/></div>
       <div id="other">{otherGrid}</div>
       <div id="button">
-        {/* <button onClick={() => socket.emit('changeColor', {name: username})}>Change All Color</button> */}
-        {/* <button onClick={() => socket.emit('changeMyColor', {name: username})}>Change My Color</button> */}
-        {/* <button onClick={() => socket.emit('moveDown', {name: username})}>Move Down</button> */}
-        <button onClick={() => socket.emit('move', {name: username, direction: -1})}>←</button>
-        <button onClick={() => socket.emit('move', {name: username, direction: 1})}>→</button>
-        <button onClick={() => socket.emit('move', {name: username, direction: 0})}>↓</button>
-        <button onClick={() => socket.emit('pause', {name: username})}>Pause</button>
-        <button onClick={() => socket.emit('start', {name: username})}>Start Game</button>
-        <button onClick={() => socket.emit('rotate', {name: username})}>Rotate</button>
+        {permission === 2 ?
+  (        <Button variant="success" onClick={() => socket.emit('start', {name: username})}>Start Game</Button>  )
+          : ( "Only the owner can start the game")
+        }
       </div>
     </div>
   );

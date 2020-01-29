@@ -10,15 +10,17 @@
 #other {
   display: flex;
   flex-wrap: wrap;
-  margin: 5px;
+  margin: 15px;
   padding: 5px;
   user-select: none;
 }
 
 #button {
-  display: grid;
+  margin:auto;
+  width: 150px;
 }
 
 button {
   margin: auto;
+  width: 150px;
 }

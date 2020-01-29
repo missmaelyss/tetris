@@ -11,7 +11,6 @@ function Game(roomId, creator, socket) {
     this.leaveRoom = leaveRoom
     this.startGame = startGame
     this.sendToAll = sendToAll
-    this.sendPlayersOwnGrid = sendPlayersOwnGrid
     this.gameLoop = gameLoop
     this.gameTick = gameTick
     this.move = move
@@ -33,9 +32,13 @@ function joinRoom(name, socket){
 }
 
 function leaveRoom(name) {
-    this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
+    let deleted = this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
+    if (deleted.permission == 2){
+        this.players[0].permission = 1
+        this.player.sendMyInfo();
+        console.log(this.players[0])
+    }
     console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
-    // this.sendToAll("players", data = this.publicPlayersData())
     this.playerData = this.publicPlayersData()
     this.sendToAll("players", data = this.playerData)
 }
@@ -134,12 +137,6 @@ function    publicPlayersData(){
         publicPlayersData.push(copyPlayer)
     })
     return publicPlayersData
-}
-
-function    sendPlayersOwnGrid(){
-    this.players.forEach(player => {
-        player.socket.emit(tag, player.grid)
-    });
 }
 
 function sendToAll(tag, data) {

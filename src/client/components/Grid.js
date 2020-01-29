@@ -1,37 +1,50 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import Tail from './Tail'
+import Container from 'react-bootstrap/Container'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
+
+
 import './Grid.css'
 
 const COLORS = ["white","red", "yellow", "green",
  "blue", "orange", "dark-blue", "violet","grey"]
 
 const Grid = ({ grid, type, score, piece}) => (
-    <div className="player">
-        <div className={`grid ${type}`}>
+  <Container xs={12} sm={10} md={8} className="player">
+    <Row className="justify-content-md-center">
+      <Col xs="auto">
+        {type === 'others'? (<div className="score">{"Score: " + score}</div>) : ('')}
+        <div className={`grid ${type} align-content-right`}>
         {
-            grid.map((colorIndex, index) => (
-                <Tail
-                    key={index}
-                    color={ COLORS[colorIndex] }
-                    other={type}
-                />
-            ))
+          grid.map((colorIndex, index) => (
+            <Tail
+              key={index}
+              color={ COLORS[colorIndex] }
+              other={type}
+            />
+          ))
         }
         </div>
+      </Col>
+      <Col xs="auto">
         <div className="score">{"Score: " + score}</div>
-        <div className={`grid piece`}>
-        {
-            piece.map((colorIndex, index) => (
-                <Tail
-                    key={index}
-                    color={ COLORS[colorIndex] }
-                    other="piece"
-                />
-            ))
-        }
-        </div>
-    </div>    
+        {type === 'real' ? (
+          <div className={`grid piece`}>
+            {
+              piece.map((colorIndex, index) => (
+              <Tail
+                key={index}
+                color={ COLORS[colorIndex] }
+                other="piece"
+              />
+              ))
+            }
+          </div>) : (' ')}
+        </Col>
+      </Row>
+    </Container>    
 )
 
 Grid.propTypes = {

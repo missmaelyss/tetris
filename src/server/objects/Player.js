@@ -271,7 +271,8 @@ function newPiece(){
 }
 
 function sendMyInfo() {
-    let me = {name: this.name, grid: this.grid, score: this.score, piece: this.nextGrid}
+    console.log(this.permission)
+    let me = {name: this.name, grid: this.grid, score: this.score, piece: this.nextGrid, permission: this.permission}
     this.socket.emit('me', me)
 }
 

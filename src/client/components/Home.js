@@ -16,7 +16,7 @@ const Home = () => {
     <Container className="pt-5 h-100">
       <Row className="pb-5 h-100 justify-content-center align-items-center">
         <Col xs={12} sm={11} md={10} lg={8} className="ml-0 mb-5">
-          <h1 className="display-4 text-light text-center" >RedTetris</h1>
+          <h1 className="display-4 text-error text-center" >RedTetris</h1>
           <Card>
             <Card.Body text="black">
               <InputGroup className="mb-3">

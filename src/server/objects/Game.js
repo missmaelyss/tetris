@@ -15,32 +15,83 @@ function Game(roomId, creator, socket) {
     this.gameTick = gameTick
     this.move = move
     this.pause = pause
-
+    this.addLinesExcept = addLinesExcept
+    this.sendGameStatus = sendGameStatus
+    this.getPlayerList = getPlayerList
     console.log(creator, "opened the room #" + roomId)
     this.players[0].sendMyInfo()
     return this;
+}
+
+function getPlayerList(){
+    var players = []
+    var spectators = []
+    var creator
+    this.players.forEach((player)=> {
+        if (player.permission === 0){
+            spectators.push({
+                name: player.name,
+            })
+        } else if (player.permission === 2){
+            creator = {
+                name: player.name,
+                classement: player.classement,
+                score: player.score
+            }
+        } else {
+            players.push({
+                name: player.name,
+                classement: player.classement,
+                score: player.score
+            })
+        }
+    })
+    return {players: players, spectators: spectators, creator: creator}
+}
+
+function sendGameStatus (){
+    let data = {
+        status: this.status,
+        users: this.getPlayerList()
+    }
+    this.sendToAll("gameStatus", data)
 }
 
 function joinRoom(name, socket){
     //TODO: need to check if the username is taken
     
     this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket, this.roomId))
-
-    console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
+    if (this.status == "waiting")
+        console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
+    else
+        console.log(name, "is spectating the room #" + this.roomId)
     this.playerData = this.publicPlayersData()
     this.sendToAll("players", data = this.playerData)
 }
 
+
 function leaveRoom(name) {
-    let deleted = this.players.splice(this.players.findIndex((element) => element.name == name ), 1)
-    if (deleted.permission == 2){
-        this.players[0].permission = 1
-        this.player.sendMyInfo();
-        console.log(this.players[0])
-    }
+    var deleted = this.players.find((element) => element.name == name)
+    this.players.splice(this.players.findIndex((element) => element.name == name), 1)
     console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
+    if (deleted.permission == 2 && this.players.length){
+        this.players[0].permission = 2
+        console.log(this.players[0].name, "is now the owner of #" + this.roomId)
+        this.players[0].sendMyInfo();
+    }
     this.playerData = this.publicPlayersData()
-    this.sendToAll("players", data = this.playerData)
+    this.sendToAll("players", this.playerData)
+}
+
+//Add Lines to every player except name
+function addLinesExcept(amount, name){
+    if (amount === 0)
+        return;
+    this.players.forEach((player)=>{
+        if (player.name !== name){
+            player.addBottomLines(amount);
+        }
+    })
 }
 
 function gameTick(){
@@ -48,19 +99,19 @@ function gameTick(){
         if(player.status == 0) {
             if (player.piece.stop){
                 delete player.piece;
-                player.checkLines();
+                this.addLinesExcept(player.checkLines(), player.name);
                 player.piece = player.nextPiece;
                 player.nextPiece = player.newPiece();
                 player.NextGrid()
             }
-            else
-            {
-                if (!player.pause)
-                    this.move(player.name, 0)
-            }
+            else if (!player.pause)
+                this.move(player.name, 0)
         }
-        else
+        else if (player.classement === 0 && player.status === 1){
+            player.classement = this.players.filter(player => player.status == 0 && player.permission != 0).length + 1
+            console.log(player.name, "lost in #" + this.roomId, "on rank",  player.classement)
             player.changeColorGrid()
+        }
     })
     this.sendToAll("players", data = this.playerData)
 }
@@ -71,6 +122,7 @@ function gameLoop(){
             clearInterval(interval)
             this.status = "ended"
             console.log("#" + this.roomId + " just ended")
+            this.sendGameStatus()
         }
         else {
             this.gameTick()
@@ -132,14 +184,17 @@ function    publicPlayersData(){
     var publicPlayersData = []
 
     this.players.forEach(player => {
-        let copyPlayer = {... player}
-        delete copyPlayer.socket
-        publicPlayersData.push(copyPlayer)
+        if (player.permission != 0){
+            let copyPlayer = {... player}
+            delete copyPlayer.socket
+            publicPlayersData.push(copyPlayer)
+        }
     })
     return publicPlayersData
 }
 
 function sendToAll(tag, data) {
+
     this.players.forEach(player => {
         player.socket.emit(tag, data, player.grid)
     });

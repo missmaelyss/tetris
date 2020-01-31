@@ -26,3 +26,15 @@
 .grid.other {
   width: 150px;
 }
+
+@media all and (max-height: 700px){
+  .grid.real {
+    width: 200px;
+  }
+  .grid.piece {
+    width: 40px;
+  }
+  .grid.other {
+    width: 100px;
+  }
+}

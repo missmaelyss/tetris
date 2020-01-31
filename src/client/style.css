@@ -15,3 +15,14 @@ button {
 .block {
     flex: 1 1 calc(100% / 6 - 0.4em);
 }
+
+body{
+    color:white;
+    min-height: 100vh;
+}
+#root{
+    min-height: 100vh;
+}
+#app {
+    min-height: 100vh;
+}

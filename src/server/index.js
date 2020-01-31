@@ -17,17 +17,21 @@ io.on("connection", socket => {
     Games.push(currentGame = new Game(socket.handshake.query.room, socket.handshake.query.name, socket))
   else
     currentGame.joinRoom(socket.handshake.query.name, socket);
+  currentGame.sendGameStatus();
   socket.on("disconnect", () => {
     currentGame.leaveRoom(socket.handshake.query.name)
     if (currentGame.players.length == 0){
       delete currentGame;
       console.log("Room #" + socket.handshake.query.room + " closed because it was empty")
       Games.splice(Games.indexOf((element) => element.roomId == socket.handshake.query.room))
+    } else {
+      currentGame.sendGameStatus();
     }
   });
 
   socket.on("start", ({name}) => {
     currentGame.startGame(name);
+    currentGame.sendGameStatus();
   })
   socket.on("move", ({name, direction}) => {
     currentGame.move(name, direction)

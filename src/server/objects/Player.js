@@ -45,13 +45,11 @@ function Player(name, permission, socket, room){
     this.color = 0
     this.permission = permission // 0 = spectator, 1 = player, 2 = creator
     this.socket = socket
-    this.classement = 0 // 0 = default, 1 = winner, else classement 
-    this.grid = new Array(200).fill(this.color)
+    this.classement =  (this.permission != 0 ? 0 : -1)// 0 = default, 1 = winner, -1 = spectator else classement 
+    this.grid = (this.permission != 0 ? new Array(200).fill(this.color) : [])
     this.seed = require('random-seed').create(room)
     this.newPiece = newPiece
     this.piece = this.newPiece()
-
-    // MAE
     this.seed = require('random-seed').create(room)
     this.changeColorGrid = changeColorGrid
     this.sendMyInfo = sendMyInfo
@@ -64,12 +62,21 @@ function Player(name, permission, socket, room){
     this.checkLines = checkLines
     this.down = down
     this.score = 0;
-    this.status = 0 // 0 current, 1 over
-
+    this.status = (this.permission != 0 ? 0 : 1) // 0 current, 1 over
+    this.addBottomLines = addBottomLines
     this.nextGrid = new Array(16).fill(this.color)
     this.nextPiece = this.newPiece()
     this.NextGrid = NextGrid
     this.NextGrid()
+}
+
+function addBottomLines(amount){
+    this.grid.splice(0, 10 * amount)
+    while (amount > 0){
+        this.grid.push(8,8,8,8,8,8,8,8,8,8)
+        amount--;
+    }
+    this.checkBottom();
 }
 
 function checkLines(){
@@ -77,20 +84,10 @@ function checkLines(){
     let lineCount = 0;
     while (i < 20){
         let current = this.grid.slice(i * 10, (i + 1) * 10)
-        if (!(current.some((element) => element === 0))){
+        if (!(current.some((element) => element <= 0))){
             this.grid.splice(i * 10, 10)
             this.grid.unshift(0,0,0,0,0,0,0,0,0,0)
             lineCount++;
-        } else if (lineCount != 0) {
-            if (lineCount == 1)
-                this.score += 40
-            else if (lineCount == 2)
-                this.score += 100
-            else if (lineCount == 3)
-                this.score += 300
-            else if (lineCount == 4)
-                this.score += 1200
-            lineCount = 0;
         }
         i++;
     }
@@ -102,7 +99,7 @@ function checkLines(){
         this.score += 300
     else if (lineCount == 4)
         this.score += 1200
-    lineCount = 0;
+    return lineCount;
 }
 
 function switchPause() {
@@ -162,25 +159,13 @@ function checkPiece() {
             if (this.piece.grid[i][l])
             {
                 if (l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 200)
-                {
-                    // console.log("trop en bas")
                     return (0)
-                }
                 if (l + this.piece.position[0] + (i + this.piece.position[1]) * 10 >= 0 && this.grid[l + this.piece.position[0] + (i + this.piece.position[1]) * 10] != 0)
-                {
-                    // console.log("touche une autre piece")
                     return (0)
-                }
                 if (l + this.piece.position[0] - 1 + (i + this.piece.position[1]) * 10 % 10 == 9)
-                {
-                    // console.log(l + this.piece.position[0] + (i + this.piece.position[1]) * 10 + " trop a droite")
                     return (0)
-                }
                 if (l + this.piece.position[0] + 1 + (i + this.piece.position[1]) * 10 % 10 == 0)
-                {
-                    // console.log(l + this.piece.position[0] + (i + this.piece.position[1]) * 10 + " trop a gauche")
                     return (0)
-                }
                 
             }
             l++
@@ -271,7 +256,6 @@ function newPiece(){
 }
 
 function sendMyInfo() {
-    console.log(this.permission)
     let me = {name: this.name, grid: this.grid, score: this.score, piece: this.nextGrid, permission: this.permission}
     this.socket.emit('me', me)
 }

@@ -3,8 +3,7 @@ import io from "socket.io-client"
 import './Game.css'
 import Grid from './Grid'
 import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-
+import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
 const endpoint = 'localhost:4001';
@@ -24,11 +23,16 @@ const Game = () => {
   const [myPiece, setMyPiece] = useState([])
   const [otherGrid, setOtherGrid] = useState([])
   const [permission, setPermission] = useState([])
+  const [gameStatus, setGameStatus] = useState([])
 
 
   useEffect(() => {
+    socket.on('gameStatus', (status) => {
+      setGameStatus(status)
+    });
     socket.on('players',(others, me) => {
       // setMyGrid(me)
+      setMyGrid(me)
       others.splice(others.findIndex((element) => element.name === username), 1)
       var element = others.map((other) => (
         <Col>
@@ -39,7 +43,6 @@ const Game = () => {
     });
 
     socket.on('me',(me) => {
-      console.log(me)
       setMyGrid(me.grid)
       setMyScore(me.score)
       setMyPiece(me.piece)
@@ -52,21 +55,29 @@ const Game = () => {
     return(<Redirect to="/" />)
 
   function keyHandler(event){
-    if (keyReady === false) { return; }
+    if (keyReady === false) { event.preventDefault();return; }
+    
+
     keyReady = false
 
-    if (event.key === 'ArrowDown')
+    if (event.key === 'ArrowDown'){
+      event.preventDefault();
       socket.emit('move', {name: username, direction: 0})
+    }
     else if (event.key === 'ArrowLeft' || event.key === "ArrowRight" ){
       socket.emit('move',{
         name: username, 
         direction: (event.key === "ArrowLeft" ? -1 : 1)
       })
     }
-    else if (event.key === " ")
+    else if (event.key === " "){
+      event.preventDefault();
       socket.emit('space', {name:username})
-    else if (event.key === "ArrowUp")
+    }
+    else if (event.key === "ArrowUp"){
+      event.preventDefault();
       socket.emit('rotate', {name:username})
+    }
     else {
       keyReady = true
       return;
@@ -76,16 +87,21 @@ const Game = () => {
 
   window.addEventListener("keydown", keyHandler)
   return (
-    <div id="app">
-      <div id="real"><Grid grid={myGrid} type="real" score={myScore} piece={myPiece}/></div>
-      <div id="other">{otherGrid}</div>
-      <div id="button">
-        {permission === 2 ?
-  (        <Button variant="success" onClick={() => socket.emit('start', {name: username})}>Start Game</Button>  )
-          : ( "Only the owner can start the game")
-        }
-      </div>
-    </div>
+    <>
+      <h1 class="display-4">Room #{room}</h1>
+      { gameStatus.status !== 'started' ? (
+        <Lobby status={gameStatus.status} users={gameStatus.users} socket={socket} username={username} />)
+      : ('')
+      }
+      {(permission === 2 ||  permission === 1) && gameStatus.status !== 'waiting' ? (
+        <Col className="mb-5"><Grid grid={myGrid} type="real" score={myScore} piece={myPiece}/></Col>)
+        : ('')
+      }
+      { gameStatus.status !== 'waiting' ? (
+        <Col id="other">{otherGrid}</Col>)
+        : ('')
+      }
+    </>
   );
 }
 

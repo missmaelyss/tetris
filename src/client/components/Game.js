@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import io from "socket.io-client"
 import './Game.css'
 import Grid from './Grid'
+import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
-const endpoint = 'localhost:4001';
+const endpoint = '51.91.56.214:4001';
 let socket = false;
 
 let keyReady = true;
@@ -15,8 +16,8 @@ const Game = () => {
   let {room, username} = useParams();
 
   if (!socket){
-
     socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
+    console.log(socket)
   }
   const [myGrid, setMyGrid] = useState([])
   const [myScore, setMyScore] = useState([])
@@ -32,8 +33,10 @@ const Game = () => {
     });
     socket.on('players',(others, me) => {
       // setMyGrid(me)
+      var myGrid = others.findIndex((element) => element.name === username)
       setMyGrid(me)
-      others.splice(others.findIndex((element) => element.name === username), 1)
+      if (myGrid !== -1)
+        others.splice(myGrid, 1)
       var element = others.map((other) => (
         <Col>
           <Grid grid={other.grid} type="other" score={other.score} piece={other.nextGrid}/>
@@ -87,8 +90,8 @@ const Game = () => {
 
   window.addEventListener("keydown", keyHandler)
   return (
-    <>
-      <h1 class="display-4">Room #{room}</h1>
+    <Container id="content" xs={10} sm={6} md={4} >
+      <h1 className="display-4">Room #{room}</h1>
       { gameStatus.status !== 'started' ? (
         <Lobby status={gameStatus.status} users={gameStatus.users} socket={socket} username={username} />)
       : ('')
@@ -101,7 +104,7 @@ const Game = () => {
         <Col id="other">{otherGrid}</Col>)
         : ('')
       }
-    </>
+    </Container>
   );
 }
 

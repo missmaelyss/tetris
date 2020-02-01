@@ -18,6 +18,9 @@ function Game(roomId, creator, socket) {
     this.addLinesExcept = addLinesExcept
     this.sendGameStatus = sendGameStatus
     this.getPlayerList = getPlayerList
+    this.socketIdToPlayer = socketIdToPlayer
+    this.resetGame = resetGame
+    this.inviteSpectators = inviteSpectators
     console.log(creator, "opened the room #" + roomId)
     this.players[0].sendMyInfo()
     return this;
@@ -89,9 +92,44 @@ function addLinesExcept(amount, name){
         return;
     this.players.forEach((player)=>{
         if (player.name !== name){
-            player.addBottomLines(amount);
+            console.log("add", amount, " to", player.name)
+            player.linesToAdd += amount;
         }
     })
+}
+
+function resetGame(id){
+    if (this.socketIdToPlayer(id).permission != 2){
+        return;
+    }
+    var newPlayers = [];
+
+    this.players.forEach((player) => {
+        newPlayers.push(new Player(player.name, player.permission, player.socket, player.room))
+    })
+    this.players = newPlayers
+    this.status = 'waiting'
+    this.sendGameStatus()
+    this.playerData = this.publicPlayersData()
+    this.sendToAll("players", data = this.playerData)
+
+}
+
+function inviteSpectators(){
+    console.log("invite spectators")
+    this.players.forEach((element, index) => {
+        if (element.permission == 0){
+            this.players[index] = new Player(element.name, 1, element.socket, element.room)
+            
+        } 
+    })
+    this.sendGameStatus()
+    this.playerData = this.publicPlayersData()
+    this.sendToAll("players", data = this.playerData)
+}
+
+function socketIdToPlayer(id){
+    return (this.players.find(element => element.socket.id === id))
 }
 
 function gameTick(){
@@ -102,10 +140,11 @@ function gameTick(){
                 this.addLinesExcept(player.checkLines(), player.name);
                 player.piece = player.nextPiece;
                 player.nextPiece = player.newPiece();
+                player.addBottomLines()
                 player.NextGrid()
             }
             else if (!player.pause)
-                this.move(player.name, 0)
+                this.move(player.socket.id, 0)
         }
         else if (player.classement === 0 && player.status === 1){
             player.classement = this.players.filter(player => player.status == 0 && player.permission != 0).length + 1
@@ -113,6 +152,7 @@ function gameTick(){
             player.changeColorGrid()
         }
     })
+    this.playerData = this.publicPlayersData()
     this.sendToAll("players", data = this.playerData)
 }
 
@@ -130,13 +170,14 @@ function gameLoop(){
     }, 500);
 }
 
-function startGame(name) {
+function startGame(id) {
+    var user = this.players.find((element) => element.socket.id == id)
     if (this.status !== "waiting"){
-        console.log(name + " tried to start the game in Room #" + this.roomId, "but it already started")
+        console.log(user.name + " tried to start the game in Room #" + this.roomId, "but it already started")
         return -1;
     }
-    else if (this.players.findIndex((element) => element.permission == 2).name == name){
-        console.log(name + " tried to start the game in Room #" + this.roomId, "but don't have permission")
+    else if (user.permission !== 2){
+        console.log(user.name + " tried to start the game in Room #" + this.roomId, "but don't have permission")
         return -1;
     }
     console.log("#" + this.roomId + " just started")
@@ -144,11 +185,11 @@ function startGame(name) {
     this.gameLoop()
 }
 
- function move(name, direction) {
+ function move(id, direction) {
     if (this.status != 'started')
         return
     // 0 = bas, direction: -1 = left 1 = right, 2 = rotate
-    var player = this.players.find((element) => element.name == name)
+    var player = this.players.find((element) => element.socket.id == id)
     // if (player.pause)
     //     return
     player.removePieceToGrid();

@@ -2,3 +2,8 @@
     width: 200px;
     margin:auto;
 }
+
+#Lobbycontent{
+    height: auto;
+    border: 1.5rem  double red;
+}

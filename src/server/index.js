@@ -20,7 +20,7 @@ io.on("connection", socket => {
   currentGame.sendGameStatus();
   socket.on("disconnect", () => {
     currentGame.leaveRoom(socket.handshake.query.name)
-    if (currentGame.players.length == 0){
+    if (!currentGame.players.some((element) => element.permission !== 0)){
       delete currentGame;
       console.log("Room #" + socket.handshake.query.room + " closed because it was empty")
       Games.splice(Games.indexOf((element) => element.roomId == socket.handshake.query.room))
@@ -28,22 +28,24 @@ io.on("connection", socket => {
       currentGame.sendGameStatus();
     }
   });
-
-  socket.on("start", ({name}) => {
-    currentGame.startGame(name);
+  socket.on("start", () => {
+    currentGame.startGame(socket.id);
     currentGame.sendGameStatus();
   })
-  socket.on("move", ({name, direction}) => {
-    currentGame.move(name, direction)
+  socket.on("move", ({direction}) => {
+    currentGame.move(socket.id, direction)
   });
-  socket.on("pause", ({name}) => {
-    currentGame.pause(name)
+  socket.on("rotate", () => {
+    currentGame.move(socket.id, 2)
   });
-  socket.on("rotate", ({name}) => {
-    currentGame.move(name, 2)
+  socket.on("space", () => {
+    currentGame.move(socket.id, 3)
   });
-  socket.on("space", ({name}) => {
-    currentGame.move(name, 3)
+  socket.on("reset", () => {
+    currentGame.resetGame(socket.id)
+  });
+  socket.on("switchSpectators", ({name}) => {
+    currentGame.inviteSpectators(name)
   });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

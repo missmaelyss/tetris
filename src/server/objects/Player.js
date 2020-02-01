@@ -60,6 +60,7 @@ function Player(name, permission, socket, room){
     this.checkPiece = checkPiece
     this.checkBottom = checkBottom
     this.checkLines = checkLines
+    this.linesToAdd = 0;
     this.down = down
     this.score = 0;
     this.status = (this.permission != 0 ? 0 : 1) // 0 current, 1 over
@@ -70,13 +71,12 @@ function Player(name, permission, socket, room){
     this.NextGrid()
 }
 
-function addBottomLines(amount){
-    this.grid.splice(0, 10 * amount)
-    while (amount > 0){
+function addBottomLines(){
+    this.grid.splice(0, 10 * this.linesToAdd)
+    while (this.linesToAdd > 0){
         this.grid.push(8,8,8,8,8,8,8,8,8,8)
-        amount--;
+        this.linesToAdd--;
     }
-    this.checkBottom();
 }
 
 function checkLines(){
@@ -84,7 +84,7 @@ function checkLines(){
     let lineCount = 0;
     while (i < 20){
         let current = this.grid.slice(i * 10, (i + 1) * 10)
-        if (!(current.some((element) => element <= 0))){
+        if (!(current.some((element) => element == 0 || element == 8 ))){
             this.grid.splice(i * 10, 10)
             this.grid.unshift(0,0,0,0,0,0,0,0,0,0)
             lineCount++;
@@ -99,7 +99,7 @@ function checkLines(){
         this.score += 300
     else if (lineCount == 4)
         this.score += 1200
-    return lineCount;
+    return (lineCount - 1 > 0 ? lineCount - 1 : 0);
 }
 
 function switchPause() {

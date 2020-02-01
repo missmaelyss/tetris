@@ -1,6 +1,5 @@
 import React from 'react'
 import './App.css'
-import TopBar from './Nav'
 import Home from './Home'
 import Game from './Game'
 import Container from 'react-bootstrap/Container'
@@ -10,7 +9,6 @@ const App = () => {
   return (
     <div id="app">
       <Router>
-        <TopBar/>
         <Container id="content" xs={10} sm={6} md={4} >
           <Switch>
             <Route path="/:room/:username" exact component={Game}></Route>

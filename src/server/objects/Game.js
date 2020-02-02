@@ -172,7 +172,7 @@ function gameLoop(){
         else {
             this.gameTick()
         }
-    }, 1000);
+    }, 500);
 }
 
 function startGame(id, spectrum, lines) {

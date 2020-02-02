@@ -32,9 +32,9 @@ const Lobby = ({status, users, socket, username}) => {
         </Col>
         <Col className="justify-content-md-centere">
           <div className="buttons">
-            <Button className="mb-1" disabled={status !== 'waiting'} variant="success" onClick={() => socket.emit('start', {name: username, spectrum: spectrum, lines: lines})}>Start Game</Button><br></br>
-            <Button className="mb-1" disabled={!(status === 'ended' && users.spectators.length > 0)} variant="success" onClick={() => socket.emit('switchSpectators', {name: username})}>Invite Spectators</Button>
-            <Button className="mb-1" disabled={!(status === 'ended')} variant="success" onClick={() => socket.emit('reset', {name: username})}>Reset Room</Button>
+            <Button className="mb-1" disabled={status !== 'waiting'} variant="success" onClick={() => socket.emit('start', { spectrum: spectrum, lines: lines})}>Start Game</Button><br></br>
+            <Button className="mb-1" disabled={!(status === 'ended' && users.spectators.length > 0)} variant="success" onClick={() => socket.emit('switchSpectators')}>Invite Spectators</Button>
+            <Button className="mb-1" disabled={!(status === 'ended')} variant="success" onClick={() => socket.emit('reset')}>Reset Room</Button>
             <Button className="mb-1" variant={spectrum ? "success" : "secondary"} onClick={() => setSpectrum(!spectrum)}>Spectrum {spectrum ? " enabled" : "disabled"} </Button>
             <Button className="mb-1" variant={lines ? "success" : "secondary"} onClick={() => setLines((lines + 1) % 3)}>{lines === 0 ? "No Malus Lines" : (lines === 1 ? "Destructibles lines" : "Indestructibles Lines")} </Button>
           </div>

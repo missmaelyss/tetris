@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
+import './Home.css'
 
 
 const Home = () => {
@@ -13,7 +13,7 @@ const Home = () => {
   const [room, setRoom] = useState([])
 
   return (
-    <Container className="pt-5 h-100">
+    <Card className="pt-5 white-background align-self-center">
       <Row className="pb-5 h-100 justify-content-center align-items-center">
         <Col xs={12} sm={11} md={10} lg={8} className="ml-0 mb-5">
           <h1 className="display-4 text-error text-center" >RedTetris</h1>
@@ -48,7 +48,7 @@ const Home = () => {
           </Card>
         </Col>
       </Row>
-    </Container>
+    </Card>
   )
 }
 

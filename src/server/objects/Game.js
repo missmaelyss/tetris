@@ -21,6 +21,8 @@ function Game(roomId, creator, socket) {
     this.socketIdToPlayer = socketIdToPlayer
     this.resetGame = resetGame
     this.inviteSpectators = inviteSpectators
+    this.spectrum = 0
+    this.linesMode = 0
     console.log(creator, "opened the room #" + roomId)
     this.players[0].sendMyInfo()
     return this;
@@ -115,7 +117,10 @@ function resetGame(id){
 
 }
 
-function inviteSpectators(){
+function inviteSpectators(id){
+    if (this.socketIdToPlayer(id).permission != 2){
+        return;
+    }
     console.log("invite spectators")
     this.players.forEach((element, index) => {
         if (element.permission == 0){
@@ -140,7 +145,7 @@ function gameTick(){
                 this.addLinesExcept(player.checkLines(), player.name);
                 player.piece = player.nextPiece;
                 player.nextPiece = player.newPiece();
-                player.addBottomLines()
+                player.addBottomLines(this.linesMode)
                 player.NextGrid()
             }
             else if (!player.pause)
@@ -167,10 +172,10 @@ function gameLoop(){
         else {
             this.gameTick()
         }
-    }, 500);
+    }, 1000);
 }
 
-function startGame(id) {
+function startGame(id, spectrum, lines) {
     var user = this.players.find((element) => element.socket.id == id)
     if (this.status !== "waiting"){
         console.log(user.name + " tried to start the game in Room #" + this.roomId, "but it already started")
@@ -181,6 +186,9 @@ function startGame(id) {
         return -1;
     }
     console.log("#" + this.roomId + " just started")
+    console.log(lines)
+    this.spectrum = spectrum
+    this.linesMode = lines
     this.status = 'started'
     this.gameLoop()
 }

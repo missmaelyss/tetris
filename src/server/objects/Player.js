@@ -1,4 +1,5 @@
 const Piece = require("./Piece");
+const Rand = require('random-seed').create()
 const PiecePool = [
     [
         [[1,1,0],[0,1,1],[0,0,0]],
@@ -50,7 +51,6 @@ function Player(name, permission, socket, room){
     this.seed = require('random-seed').create(room)
     this.newPiece = newPiece
     this.piece = this.newPiece()
-    this.seed = require('random-seed').create(room)
     this.changeColorGrid = changeColorGrid
     this.sendMyInfo = sendMyInfo
     this.addPieceToGrid = addPieceToGrid
@@ -71,10 +71,33 @@ function Player(name, permission, socket, room){
     this.NextGrid()
 }
 
-function addBottomLines(){
+function getRandomInRange(min, max) {
+    return parseInt(Math.random() * (max - min) + min);
+  }
+
+function addBottomLines(linesMode){
+    if (!linesMode)
+        return
     this.grid.splice(0, 10 * this.linesToAdd)
     while (this.linesToAdd > 0){
-        this.grid.push(8,8,8,8,8,8,8,8,8,8)
+        if (linesMode == 1){
+            let empty = getRandomInRange(0, 9)
+            console.log("empty", empty)
+            this.grid.push(
+                (empty == 0 ? 0 : getRandomInRange(1, 8)),
+                (empty == 1 ? 0 : getRandomInRange(1, 8)),
+                (empty == 2 ? 0 : getRandomInRange(1, 8)),
+                (empty == 3 ? 0 : getRandomInRange(1, 8)),
+                (empty == 4 ? 0 : getRandomInRange(1, 8)),
+                (empty == 5 ? 0 : getRandomInRange(1, 8)),
+                (empty == 6 ? 0 : getRandomInRange(1, 8)),
+                (empty == 7 ? 0 : getRandomInRange(1, 8)),
+                (empty == 8 ? 0 : getRandomInRange(1, 8)),
+                (empty == 9 ? 0 : getRandomInRange(1, 8))
+            )
+        }
+        else if (linesMode == 2)
+            this.grid.push(8,8,8,8,8,8,8,8,8,8)
         this.linesToAdd--;
     }
 }

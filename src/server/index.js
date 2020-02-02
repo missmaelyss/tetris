@@ -28,8 +28,8 @@ io.on("connection", socket => {
       currentGame.sendGameStatus();
     }
   });
-  socket.on("start", () => {
-    currentGame.startGame(socket.id);
+  socket.on("start", ({spectrum, lines}) => {
+    currentGame.startGame(socket.id, spectrum, lines);
     currentGame.sendGameStatus();
   })
   socket.on("move", ({direction}) => {
@@ -44,8 +44,8 @@ io.on("connection", socket => {
   socket.on("reset", () => {
     currentGame.resetGame(socket.id)
   });
-  socket.on("switchSpectators", ({name}) => {
-    currentGame.inviteSpectators(name)
+  socket.on("switchSpectators", () => {
+    currentGame.inviteSpectators(socket.id)
   });
 });
 server.listen(port, () => console.log(`Listening on port ${port}`));

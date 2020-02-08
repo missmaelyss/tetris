@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
-const endpoint = 'localhost:4001'//'51.91.56.214:4001';
+const endpoint = '10.12.2.17:4001'//'51.91.56.214:4001';
 let socket = false;
 
 let keyReady = true;
@@ -18,7 +18,6 @@ const Game = () => {
 
   if (!socket){
     socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
-    console.log(socket)
   }
   const [myGrid, setMyGrid] = useState([])
   const [myScore, setMyScore] = useState([])
@@ -78,18 +77,14 @@ const Game = () => {
       var yDiff = yDown - yUp;
       if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
         if ( xDiff > 0 ) {
-          console.log("Left")
           socket.emit('move', {direction: -1})
         } else {
-          console.log("Right")
           socket.emit('move', {direction: 1})
         }                       
       } else {
           if ( yDiff > 0 ) {
-            console.log("Up")
             socket.emit('rotate')
           } else { 
-            console.log("down")
             socket.emit('move', {direction: 0})
           }
         }

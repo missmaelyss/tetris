@@ -82,7 +82,6 @@ function addBottomLines(linesMode){
     while (this.linesToAdd > 0){
         if (linesMode == 1){
             let empty = getRandomInRange(0, 9)
-            console.log("empty", empty)
             this.grid.push(
                 (empty == 0 ? 0 : getRandomInRange(1, 8)),
                 (empty == 1 ? 0 : getRandomInRange(1, 8)),

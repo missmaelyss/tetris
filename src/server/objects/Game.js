@@ -217,6 +217,7 @@ function startGame(id, spectrum, lines) {
     }
     
     player.addPieceToGrid()
+    player.changeSpectrum()
     player.sendMyInfo()
     // this.sendToAll("players", data = this.playerData)
 }
@@ -233,6 +234,8 @@ function    publicPlayersData(){
         if (player.permission != 0){
             let copyPlayer = {... player}
             delete copyPlayer.socket
+            if (this.spectrum)
+                copyPlayer.grid = copyPlayer.spectrum
             publicPlayersData.push(copyPlayer)
         }
     })

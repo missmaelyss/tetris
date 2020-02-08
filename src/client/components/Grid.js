@@ -9,9 +9,9 @@ import Row from 'react-bootstrap/Row'
 import './Grid.css'
 
 const COLORS = ["white","red", "yellow", "green",
- "blue", "orange", "dark-blue", "violet","grey"]
+ "blue", "orange", "dark-blue", "violet","grey","dark-grey"]
 
-const Grid = ({ grid, type, score, piece}) => (
+const Grid = ({ grid, type, name, score, piece}) => (
   <Container xs={12} sm={10} md={8} className="player">
     <Row className="justify-content-md-center">
       <Col xs="auto">
@@ -29,6 +29,7 @@ const Grid = ({ grid, type, score, piece}) => (
         </div>
       </Col>
       <Col xs="auto">
+        <div className="score">{name}</div>
         <div className="score">{"Score: " + score}</div>
         {type === 'real' ? (
           <div className={`grid piece`}>
@@ -50,6 +51,7 @@ const Grid = ({ grid, type, score, piece}) => (
 Grid.propTypes = {
     grid: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     score: PropTypes.number.isRequired,
     piece: PropTypes.array.isRequired,
 }

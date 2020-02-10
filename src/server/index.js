@@ -19,7 +19,7 @@ io.on("connection", socket => {
     currentGame.joinRoom(socket.handshake.query.name, socket);
   currentGame.sendGameStatus();
   socket.on("disconnect", () => {
-    currentGame.leaveRoom(socket.handshake.query.name)
+    currentGame.leaveRoom(socket.id)
     if (!currentGame.players.some((element) => element.permission !== 0)){
       delete currentGame;
       console.log("Room #" + socket.handshake.query.room + " closed because it was empty")

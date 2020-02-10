@@ -69,6 +69,27 @@ function Player(name, permission, socket, room){
     this.nextPiece = this.newPiece()
     this.NextGrid = NextGrid
     this.NextGrid()
+    this.spectrum = (this.permission != 0 ? new Array(200).fill(this.color) : [])
+    this.changeSpectrum = changeSpectrum 
+}
+
+function changeSpectrum() {
+    if (!this.status)
+        this.removePieceToGrid()
+    var l = 0
+    while (l < 10) {
+        var i = 0
+        var found = false
+        while (i < 20) {
+            if (!found && this.grid[l + i * 10] != 0 && this.grid[l + i * 10] != 8)
+                found = true
+            if (found == true)
+                this.spectrum[l + i * 10] = 9
+            i++
+        }
+        l++
+    }
+    this.addPieceToGrid()
 }
 
 function getRandomInRange(min, max) {
@@ -82,7 +103,6 @@ function addBottomLines(linesMode){
     while (this.linesToAdd > 0){
         if (linesMode == 1){
             let empty = getRandomInRange(0, 9)
-            console.log("empty", empty)
             this.grid.push(
                 (empty == 0 ? 0 : getRandomInRange(1, 8)),
                 (empty == 1 ? 0 : getRandomInRange(1, 8)),

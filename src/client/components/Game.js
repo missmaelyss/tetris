@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
-const endpoint = 'localhost:4001'//'51.91.56.214:4001';
+const endpoint = '10.12.2.17:4001'//'51.91.56.214:4001';
 let socket = false;
 
 let keyReady = true;
@@ -18,7 +18,6 @@ const Game = () => {
 
   if (!socket){
     socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
-    console.log(socket)
   }
   const [myGrid, setMyGrid] = useState([])
   const [myScore, setMyScore] = useState([])
@@ -40,7 +39,7 @@ const Game = () => {
         others.splice(myGrid, 1)
       var element = others.map((other) => (
         <Col>
-          <Grid grid={other.grid} type="other" score={other.score} piece={other.nextGrid}/>
+          <Grid grid={other.grid} type="other" name={other.name} score={other.score} piece={other.nextGrid}/>
         </Col>
       ))
       setOtherGrid(element)
@@ -78,18 +77,14 @@ const Game = () => {
       var yDiff = yDown - yUp;
       if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
         if ( xDiff > 0 ) {
-          console.log("Left")
           socket.emit('move', {direction: -1})
         } else {
-          console.log("Right")
           socket.emit('move', {direction: 1})
         }                       
       } else {
           if ( yDiff > 0 ) {
-            console.log("Up")
             socket.emit('rotate')
           } else { 
-            console.log("down")
             socket.emit('move', {direction: 0})
           }
         }
@@ -139,7 +134,7 @@ const Game = () => {
       : ('')
       }
       {(permission === 2 ||  permission === 1) && gameStatus.status !== 'waiting' ? (
-        <Col onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} className="mb-5"><Grid grid={myGrid} type="real" score={myScore} piece={myPiece}/></Col>)
+        <Col onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} className="mb-5"><Grid grid={myGrid} type="real" name="" score={myScore} piece={myPiece}/></Col>)
         : ('')
       }
       { gameStatus.status !== 'waiting' ? (

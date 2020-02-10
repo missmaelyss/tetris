@@ -75,10 +75,10 @@ function joinRoom(name, socket){
 }
 
 
-function leaveRoom(name) {
-    var deleted = this.players.find((element) => element.name == name)
-    this.players.splice(this.players.findIndex((element) => element.name == name), 1)
-    console.log(name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
+function leaveRoom(id) {
+    var deleted = this.socketIdToPlayer(id)
+    this.players.splice(this.players.findIndex((element) => element.socket.id == id), 1)
+    console.log(deleted.name, "left the room #" + this.roomId + "(" + this.players.length + " players)")
     if (deleted.permission == 2 && this.players.length){
         this.players[0].permission = 2
         console.log(this.players[0].name, "is now the owner of #" + this.roomId)
@@ -93,10 +93,8 @@ function addLinesExcept(amount, name){
     if (amount === 0)
         return;
     this.players.forEach((player)=>{
-        if (player.name !== name){
-            console.log("add", amount, " to", player.name)
+        if (player.name !== name)
             player.linesToAdd += amount;
-        }
     })
 }
 
@@ -186,7 +184,6 @@ function startGame(id, spectrum, lines) {
         return -1;
     }
     console.log("#" + this.roomId + " just started")
-    console.log(lines)
     this.spectrum = spectrum
     this.linesMode = lines
     this.status = 'started'
@@ -220,6 +217,7 @@ function startGame(id, spectrum, lines) {
     }
     
     player.addPieceToGrid()
+    player.changeSpectrum()
     player.sendMyInfo()
     // this.sendToAll("players", data = this.playerData)
 }
@@ -236,6 +234,8 @@ function    publicPlayersData(){
         if (player.permission != 0){
             let copyPlayer = {... player}
             delete copyPlayer.socket
+            if (this.spectrum)
+                copyPlayer.grid = copyPlayer.spectrum
             publicPlayersData.push(copyPlayer)
         }
     })

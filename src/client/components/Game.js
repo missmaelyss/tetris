@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
-const endpoint = '10.12.2.17:4001'//'51.91.56.214:4001';
+const endpoint = '10.12.2.9:4001'//'51.91.56.214:4001';
 let socket = false;
 
 let keyReady = true;
@@ -120,7 +120,7 @@ const Game = () => {
       keyReady = true
       return;
     }
-    setTimeout((() => {keyReady = true}), 100)
+    setTimeout((() => {keyReady = true}), 10)
   }
 
   window.addEventListener("keydown", keyHandler)

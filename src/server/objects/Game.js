@@ -193,10 +193,8 @@ function startGame(id, spectrum, lines) {
  function move(id, direction) {
     if (this.status != 'started')
         return
-    // 0 = bas, direction: -1 = left 1 = right, 2 = rotate
     var player = this.players.find((element) => element.socket.id == id)
-    // if (player.pause)
-    //     return
+ 
     player.removePieceToGrid();
     var testPiece = new Piece(player.piece.pieceId, player.piece.pieceRot)
     testPiece.color = player.piece.color
@@ -215,11 +213,9 @@ function startGame(id, spectrum, lines) {
             player.piece = testPiece
         player.checkBottom()
     }
-    
     player.addPieceToGrid()
     player.changeSpectrum()
     player.sendMyInfo()
-    // this.sendToAll("players", data = this.playerData)
 }
 
 function pause(name) {

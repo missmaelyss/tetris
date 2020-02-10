@@ -18,13 +18,16 @@ const Grid = ({ grid, type, name, score, piece}) => (
         {type === 'others'? (<div className="score">{"Score: " + score}</div>) : ('')}
         <div className={`grid ${type} align-content-right`}>
         {
+          grid.length > 0 ?
           grid.map((colorIndex, index) => (
-            <Tail
-              key={index}
-              color={ COLORS[colorIndex] }
+            <Tail className="test"
+                key={index}
+                color={ COLORS[colorIndex] }
               other={type}
             />
           ))
+          :
+          ""
         }
         </div>
       </Col>
@@ -33,7 +36,9 @@ const Grid = ({ grid, type, name, score, piece}) => (
         <div className="score">{"Score: " + score}</div>
         {type === 'real' ? (
           <div className={`grid piece`}>
+            {piece.length}
             {
+              piece.length > 0 ?
               piece.map((colorIndex, index) => (
               <Tail
                 key={index}
@@ -41,6 +46,8 @@ const Grid = ({ grid, type, name, score, piece}) => (
                 other="piece"
               />
               ))
+              :
+              ""
             }
           </div>) : (' ')}
         </Col>

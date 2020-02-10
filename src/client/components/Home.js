@@ -24,6 +24,7 @@ const Home = () => {
                   <InputGroup.Text  id="basic-addon1">Name</InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
+                  id="FormUser"
                   placeholder="Username"
                   aria-label="Username"
                   aria-describedby="basic-addon1"
@@ -32,9 +33,10 @@ const Home = () => {
               </InputGroup>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text onChange={event => setRoom(event.target.value)} id="basic-addon1"> #</InputGroup.Text>
+                      <InputGroup.Text id="basic-addon1"> #</InputGroup.Text>
                     </InputGroup.Prepend>
                     <FormControl
+                      id="FormRoom"
                       onChange={event => setRoom(event.target.value)}
                       placeholder="Room"
                       aria-label="Room"

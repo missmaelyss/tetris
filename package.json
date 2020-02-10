@@ -20,6 +20,7 @@
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "css-loader": "3.2.0",
+    "dirty-chai": "^2.0.1",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "eslint": "^6.6.0",
@@ -35,10 +36,6 @@
     "fs-extra": "^8.1.0",
     "html-webpack-plugin": "4.0.0-beta.5",
     "identity-obj-proxy": "3.0.0",
-    "jest": "24.9.0",
-    "jest-environment-jsdom-fourteen": "0.1.0",
-    "jest-resolve": "24.9.0",
-    "jest-watch-typeahead": "0.4.2",
     "lodash": "^4.17.15",
     "lodash.shuffle": "^4.2.0",
     "mini-css-extract-plugin": "0.8.0",
@@ -97,7 +94,7 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/tests"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
@@ -106,10 +103,12 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
-    "setupFilesAfterEnv": [],
+    "setupFilesAfterEnv": [
+      "<rootDir>tests/setupTests.js"
+    ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+      "<rootDir>/tests/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/tests/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {
@@ -147,5 +146,21 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-enzyme": "^1.0.0-beta.1",
+    "chai-jest-diff": "^1.0.2",
+    "chai-jest-snapshot": "^2.0.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "enzyme-to-json": "^3.4.4",
+    "react-test-renderer": "^16.12.0",
+    "sinon": "^8.1.1",
+    "sinon-chai": "^3.4.0",
+    "jest": "24.9.0",
+    "jest-environment-jsdom-fourteen": "0.1.0",
+    "jest-resolve": "24.9.0",
+    "jest-watch-typeahead": "0.4.2"
   }
 }

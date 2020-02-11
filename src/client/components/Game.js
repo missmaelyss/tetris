@@ -51,13 +51,7 @@ const Game = () => {
       setMyPiece(me.piece)
       setPermission(me.permission)
     });
-    // eslint-disable-next-line
-  },0);
-
-  if (!room || !username)
-    return(<Redirect to="/" />)
-
-
+  }, []);
 
   function handleTouchStart(evt) {
       xDown = evt.touches[0].clientX;

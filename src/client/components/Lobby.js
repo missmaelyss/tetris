@@ -15,10 +15,10 @@ const Lobby = ({status, users, socket, username}) => {
 
   if (users){
     var players = users.players.map((player) => (
-      <span role="img" aria-label="player">⚫️ {player.name}<br></br></span>
+      <span key={player.name} role="img" aria-label="player">⚫️ {player.name}<br></br></span>
     ))
     var spectators = users.spectators.map((spectator) => (
-      <span role="img" aria-label="spectator">👁 {spectator.name}<br></br></span>
+      <span key={spectator.name} role="img" aria-label="spectator">👁 {spectator.name}<br></br></span>
     ))
   }
   return(

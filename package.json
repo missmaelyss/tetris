@@ -95,21 +95,22 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/tests"
+      "<rootDir>/test"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
+      "src/server/objects/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
     ],
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>tests/setupTests.js"
+      "<rootDir>test/setupTests.js"
     ],
     "testMatch": [
-      "<rootDir>/tests/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/tests/*.{spec,test}.{js,jsx,ts,tsx}"
+      "<rootDir>/test/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/test/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {

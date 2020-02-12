@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import io from "socket.io-client"
 import React from 'react'
 import { shallow, mount  } from 'enzyme'
 import { Server } from 'mock-socket';
@@ -7,34 +6,19 @@ import {MemoryRouter} from 'react-router-dom'
 import Game from '../src/client/components/Game'
 
 describe('<Game />', () => {
-  const fakeURL = 'http://localhost:4001/';
-  const mockServer = new Server(fakeURL);
-  mockServer.on('connection', socket => {
-  });
 
   const map = {};
   window.addEventListener = jest.fn((event, cb) => {
     map[event] = cb;
   });
-  const event = { key: "ArrowLeft", preventDefault: () => {} };
+  const event = { key: "", preventDefault: () => {} };
 
   it('renders without crashing', () => {
-    
     const wrapper = shallow(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
       )
-  })
-
-  it('receives me from server with socket', () => {
-    const wrapper = shallow(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
-      </MemoryRouter>
-    )
-    var me = {grid: [1,1,1,1], score: 42, piece: [2,2,2,2], permission: 2}
-    mockServer.emit('me', me);
   })
 
   it('handles touchstart ', () => {
@@ -46,7 +30,7 @@ describe('<Game />', () => {
       map.touchstart({touches: [{ clientX: 100, clientY: 0 }]});
   })
 
-  it('handles key ArrowUp', () => {
+  it('handles false key', () => {
     const wrapper = mount(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
@@ -54,24 +38,43 @@ describe('<Game />', () => {
       )
       jest.spyOn(event, 'preventDefault');
       map.keydown(event);
+      expect(event.preventDefault).to.have.been.called;
   })
 
-  it('handles key ArrowLeft', () => {
+  it('handles key ArrowUp', () => {
     const wrapper = mount(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
       )
-      // map.keydown();
+      event.key = "ArrowUp"
+      jest.spyOn(event, 'preventDefault');
+      map.keydown(event);
+      expect(event.preventDefault).to.have.been.called;
   })
 
-  it('handles other key', () => {
+  it('handles key space', () => {
     const wrapper = mount(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
       )
-      map.keydown({ key: 'Test' });
+      event.key = " "
+      jest.spyOn(event, 'preventDefault');
+      map.keydown(event);
+      expect(event.preventDefault).to.have.been.called;
+  })
+
+  it('handles key ArrowDown', () => {
+    const wrapper = mount(
+      <MemoryRouter initialEntries={['/42/1234']}>
+        <Game/>
+      </MemoryRouter>
+      )
+      event.key = ""
+      jest.spyOn(event, 'preventDefault');
+      map.keydown(event);
+      expect(event.preventDefault).to.have.been.called;
   })
 
   it('handles touchmove with no xDown and yDown', () => {

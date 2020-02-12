@@ -105,7 +105,7 @@ function resetGame(id){
     var newPlayers = [];
 
     this.players.forEach((player) => {
-        newPlayers.push(new Player(player.name, player.permission, player.socket, player.room))
+        newPlayers.push(new Player(player.name, player.permission, player.socket, this.roomId))
     })
     this.players = newPlayers
     this.status = 'waiting'

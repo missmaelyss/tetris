@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
 import {Redirect} from 'react-router-dom'
-const endpoint = '10.12.2.9:4001'//'51.91.56.214:4001';
+const endpoint = 'localhost:4001'//'51.91.56.214:4001';
 let socket = false;
 
 let keyReady = true;

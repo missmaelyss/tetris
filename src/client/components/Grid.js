@@ -36,7 +36,6 @@ const Grid = ({ grid, type, name, score, piece}) => (
         <div className="score">{"Score: " + score}</div>
         {type === 'real' ? (
           <div className={`grid piece`}>
-            {piece.length}
             {
               piece.length > 0 ?
               piece.map((colorIndex, index) => (

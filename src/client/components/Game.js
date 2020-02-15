@@ -6,7 +6,6 @@ import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
-import {Redirect} from 'react-router-dom'
 const endpoint = 'localhost:4001'//'51.91.56.214:4001';
 let socket = false;
 
@@ -25,7 +24,6 @@ const Game = () => {
   const [otherGrid, setOtherGrid] = useState([])
   const [permission, setPermission] = useState([])
   const [gameStatus, setGameStatus] = useState([])
-
 
   useEffect(() => {
     socket.on('gameStatus', (status) => {
@@ -50,7 +48,7 @@ const Game = () => {
       setMyPiece(me.piece)
       setPermission(me.permission)
     });
-  }, []);
+  }, [username]);
 
   function handleTouchStart(evt) {
       xDown = evt.touches[0].clientX;

@@ -28,7 +28,7 @@ const Home = () => {
                   placeholder="Username"
                   aria-label="Username"
                   aria-describedby="basic-addon1"
-                  onChange={event => setName(event.target.value)}
+                  onChange={event => setName(event.target.value.replace(/\//ig, ''))}
                 />
               </InputGroup>
                   <InputGroup>
@@ -37,7 +37,7 @@ const Home = () => {
                     </InputGroup.Prepend>
                     <FormControl
                       id="FormRoom"
-                      onChange={event => setRoom(event.target.value)}
+                      onChange={event => setRoom(event.target.value.replace(/\//ig, ''))}
                       placeholder="Room"
                       aria-label="Room"
                       aria-describedby="basic-addon1"

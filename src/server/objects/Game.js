@@ -1,6 +1,18 @@
 const Player = require("./Player");
 const Piece = require("./Piece");
 
+function strRandom() {
+    var a = 5,
+        b = 'abcdefghijklmnopqrstuvwxyz',
+        c = '',
+        d = 0,
+        e = ''+b;
+    for (; d < a; d++) {
+      c += e[Math.floor(Math.random() * e.length)];
+    }
+    return c;
+  }
+
 function Game(roomId, creator, socket) {
     this.roomId = roomId,
     this.status = "waiting",
@@ -63,13 +75,12 @@ function sendGameStatus (){
 }
 
 function joinRoom(name, socket){
-    //TODO: need to check if the username is taken
-    
-    this.players.push(new Player(name, (this.status == "waiting" ? 1 : 0), socket, this.roomId))
+    var realname = (!this.players.find((player)=> player.name === name)) ? name : strRandom()
+    this.players.push(new Player(realname, (this.status == "waiting" ? 1 : 0), socket, this.roomId))
     if (this.status == "waiting")
-        console.log(name, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
+        console.log(realname, "joined the room #" + this.roomId + "(" + this.players.length + " players)")
     else
-        console.log(name, "is spectating the room #" + this.roomId)
+        console.log(realname, "is spectating the room #" + this.roomId)
     this.playerData = this.publicPlayersData()
     this.sendToAll("players", data = this.playerData)
 }
@@ -241,7 +252,7 @@ function    publicPlayersData(){
 function sendToAll(tag, data) {
 
     this.players.forEach(player => {
-        player.socket.emit(tag, data, player.grid)
+        player.socket.emit(tag, data, player.grid, player.name)
     });
 }
 

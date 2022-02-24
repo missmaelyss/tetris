@@ -7,3 +7,7 @@
     height: auto;
     border: 1.5rem  double red;
 }
+
+.username {
+    margin-left: 5px;
+}

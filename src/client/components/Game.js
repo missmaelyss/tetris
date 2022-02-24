@@ -29,8 +29,8 @@ const Game = () => {
     socket.on('gameStatus', (status) => {
       setGameStatus(status)
     });
-    socket.on('players',(others, me) => {
-      var myGrid = others.findIndex((element) => element.name === username)
+    socket.on('players',(others, me, myname) => {
+      var myGrid = others.findIndex((element) => element.name === myname)
       setMyGrid(me)
       if (myGrid !== -1)
         others.splice(myGrid, 1)

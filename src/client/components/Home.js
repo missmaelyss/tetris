@@ -43,7 +43,7 @@ const Home = () => {
                       aria-describedby="basic-addon1"
                     />
                     <InputGroup.Append>
-                      <Button disabled= {room.length === 0 || name.length === 0} href={`/${room}/${name}`} variant="outline-danger">Join</Button>
+                      <Button disabled= {room.length === 0 || name.length === 0} href={`/#${room}[${name}]`} variant="outline-danger">Join</Button>
                     </InputGroup.Append>
                   </InputGroup>
             </Card.Body>

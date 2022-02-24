@@ -16,6 +16,6 @@ describe('<Home />', () => {
 
     wrapper.find('#FormUser').at(0).simulate('change', { target: {value: 'G' }});
     wrapper.find('#FormRoom').at(0).simulate('change', { target: {value: '4' }});
-    expect(wrapper.find('Button').at(0).props().href).to.equal("/4/G");
+    expect(wrapper.find('Button').at(0).props().href).to.equal("/#4[G]");
  })
 })

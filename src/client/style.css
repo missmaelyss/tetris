@@ -1,3 +1,10 @@
+@import 'components/App.css';
+@import 'components/Game.css';
+@import 'components/Grid.css';
+@import 'components/Home.css';
+@import 'components/Lobby.css';
+@import 'components/Tail.css';
+
 .divStyle {
     margin: 0 auto;
     width: 400px;
@@ -17,7 +24,6 @@ button {
 }
 
 body{
-    color:white;
     min-height: 100vh;
 }
 #root{

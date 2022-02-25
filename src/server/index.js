@@ -8,7 +8,7 @@ const Game = require("./objects/Game");
 
 const app = express();
 app.use(index);
-app.use(express.static(path.join(__dirname, '/build')));
+app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 const server = http.createServer(app);
 const io = socketIo(server); // < Interesting!
 let Games = [];

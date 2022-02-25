@@ -9,7 +9,7 @@ const App = () => {
     <div id="app">
           <HashRouter hashType="noslash"> 
             <Route path="/:room[:username]" component={Game}/>
-            <Route path="/" component={Home}/>
+            <Route exact path="/" component={Home}/>
           </HashRouter>
     </div>
   );

@@ -6,7 +6,8 @@ import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import Lobby from "./Lobby.js"
 import {useParams} from 'react-router-dom'
-const endpoint = 'localhost:4001'//'51.91.56.214:4001';
+console.log(window.location)
+const endpoint = window.location.origin
 let socket = false;
 
 let keyReady = true;

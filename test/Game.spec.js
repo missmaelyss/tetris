@@ -1,109 +1,114 @@
 import { expect } from 'chai'
 import React from 'react'
-import { shallow, mount  } from 'enzyme'
-import { Server } from 'mock-socket';
-import {MemoryRouter} from 'react-router-dom'
+import { shallow } from 'enzyme'
+import { render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import Game from '../src/client/components/Game'
 
-describe('<Game />', () => {
+jest.mock('socket.io-client', () => () => ({
+  on: jest.fn(),
+  emit: jest.fn(),
+}))
 
-  const map = {};
+describe('<Game />', () => {
+  const map = {}
   window.addEventListener = jest.fn((event, cb) => {
-    map[event] = cb;
-  });
-  const event = { key: "", preventDefault: () => {} };
+    map[event] = cb
+  })
+  const event = { key: '', preventDefault: () => {} }
 
   it('renders without crashing', () => {
-    const wrapper = shallow(
+    shallow(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
+    )
   })
 
-  it('handles touchstart ', () => {
-    const wrapper = mount(
+  it('handles touchstart', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchstart({ touches: [{ clientX: 100, clientY: 0 }] })
   })
 
-  it('handles false key', () => {
-    const wrapper = mount(
+  it('handles an unrecognised key without calling preventDefault', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = 'a'
+    let called = false
+    event.preventDefault = () => { called = true }
+    map.keydown(event)
+    expect(called).to.equal(false)
   })
 
-  it('handles key ArrowUp', () => {
-    const wrapper = mount(
+  it('handles ArrowUp and calls preventDefault', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      event.key = "ArrowUp"
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = 'ArrowUp'
+    jest.spyOn(event, 'preventDefault')
+    map.keydown(event)
+    expect(event.preventDefault).to.have.been.called
   })
 
-  it('handles key space', () => {
-    const wrapper = mount(
+  it('handles Space and calls preventDefault', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      event.key = " "
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = ' '
+    jest.spyOn(event, 'preventDefault')
+    map.keydown(event)
+    expect(event.preventDefault).to.have.been.called
   })
 
-  it('handles key ArrowDown', () => {
-    const wrapper = mount(
+  it('handles ArrowDown and calls preventDefault', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      event.key = ""
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = 'ArrowDown'
+    jest.spyOn(event, 'preventDefault')
+    map.keydown(event)
+    expect(event.preventDefault).to.have.been.called
   })
 
-  it('handles touchmove with no xDown and yDown', () => {
-    const wrapper = mount(
+  it('handles touchmove when no touch origin is set', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchmove({ touches: [{ clientX: 100, clientY: 0 }] })
   })
 
-  it('handles touchmove with xDown and yDown', () => {
-    const wrapper = mount(
+  it('handles touchmove with horizontal swipe left', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
-      map.touchmove({touches: [{ clientX: -200, clientY: 0 }]});
+    )
+    map.touchstart({ touches: [{ clientX: 100, clientY: 100 }] })
+    map.touchmove({ touches: [{ clientX: -200, clientY: 100 }] })
   })
 
-  it('handles touchmove with xDown and yDown', () => {
-    const wrapper = mount(
+  it('handles touchmove with vertical swipe up (rotate)', () => {
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
-        <Game/>
+        <Game />
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
-      map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchstart({ touches: [{ clientX: 100, clientY: 100 }] })
+    map.touchmove({ touches: [{ clientX: 100, clientY: 0 }] })
   })
-  
 })

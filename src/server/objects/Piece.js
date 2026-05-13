@@ -59,7 +59,7 @@ function rotate() {
 }
 
 function generateGrid(pieceId, rotation) {
-    grid = PiecePool[pieceId][rotation]
+    var grid = PiecePool[pieceId][rotation]
     return grid
 }
 

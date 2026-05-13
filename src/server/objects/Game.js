@@ -82,7 +82,7 @@ function joinRoom(name, socket){
     else
         console.log(realname, "is spectating the room #" + this.roomId)
     this.playerData = this.publicPlayersData()
-    this.sendToAll("players", data = this.playerData)
+    this.sendToAll("players", this.playerData)
 }
 
 
@@ -122,7 +122,7 @@ function resetGame(id){
     this.status = 'waiting'
     this.sendGameStatus()
     this.playerData = this.publicPlayersData()
-    this.sendToAll("players", data = this.playerData)
+    this.sendToAll("players", this.playerData)
 
 }
 
@@ -139,7 +139,7 @@ function inviteSpectators(id){
     })
     this.sendGameStatus()
     this.playerData = this.publicPlayersData()
-    this.sendToAll("players", data = this.playerData)
+    this.sendToAll("players", this.playerData)
 }
 
 function socketIdToPlayer(id){
@@ -167,7 +167,7 @@ function gameTick(){
         }
     })
     this.playerData = this.publicPlayersData()
-    this.sendToAll("players", data = this.playerData)
+    this.sendToAll("players", this.playerData)
 }
 
 function gameLoop(){

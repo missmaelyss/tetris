@@ -1,48 +1,77 @@
 import { expect } from 'chai'
-import io from "socket.io-client"
 import React from 'react'
-import { shallow, mount  } from 'enzyme'
+import sinon from 'sinon'
+import { shallow } from 'enzyme'
 
 import Lobby from '../src/client/components/Lobby'
 
+const makeSocket = () => ({ emit: sinon.spy() })
+
+const users = {
+  creator: { name: 'Alice' },
+  players: [{ name: 'Bob' }],
+  spectators: [{ name: 'Charlie' }],
+}
+
 describe('<Lobby />', () => {
-  it('renders without crashing', () => {
-    const wrapper = shallow(<Lobby />)
+  it('renders without crashing with no props', () => {
+    shallow(<Lobby />)
   })
 
-  it('should trigger its `onClick` prop when clicked', () => {
-    const wrapper = shallow(<Lobby socket={io.connect("http://localhost:3000/")}/>)
+  it('renders the creator, players and spectators when users is provided', () => {
+    const wrapper = shallow(<Lobby users={users} />)
+    expect(wrapper.find('.username').length).to.be.at.least(3)
+  })
+
+  it('"Start Game" is enabled when status is "waiting"', () => {
+    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(0).props().disabled).to.equal(false)
+  })
+
+  it('"Start Game" is disabled when status is "started"', () => {
+    const wrapper = shallow(<Lobby status="started" users={users} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(0).props().disabled).to.equal(true)
+  })
+
+  it('"Reset Room" is disabled when status is "waiting"', () => {
+    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(2).props().disabled).to.equal(true)
+  })
+
+  it('"Reset Room" is enabled when status is "ended"', () => {
+    const wrapper = shallow(<Lobby status="ended" users={users} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(2).props().disabled).to.equal(false)
+  })
+
+  it('"Invite Spectators" is disabled when there are no spectators', () => {
+    const usersNoSpectators = { ...users, spectators: [] }
+    const wrapper = shallow(<Lobby status="ended" users={usersNoSpectators} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(1).props().disabled).to.equal(true)
+  })
+
+  it('emits "start" with spectrum and lines config when Start Game is clicked', () => {
+    const socket = makeSocket()
+    const wrapper = shallow(<Lobby status="waiting" users={users} socket={socket} />)
     wrapper.find('.mb-1').at(0).simulate('click')
-    wrapper.find('.mb-1').at(1).simulate('click')
-    wrapper.find('.mb-1').at(2).simulate('click')
+    expect(socket.emit).to.have.been.calledWith('start', { spectrum: false, lines: 0 })
+  })
+
+  it('toggles spectrum mode on button click', () => {
+    const socket = makeSocket()
+    const wrapper = shallow(<Lobby status="waiting" users={users} socket={socket} />)
+    expect(wrapper.find('.mb-1').at(3).text()).to.include('disabled')
     wrapper.find('.mb-1').at(3).simulate('click')
+    expect(wrapper.find('.mb-1').at(3).text()).to.include('enabled')
+  })
+
+  it('cycles lines mode: none → destructible → indestructible → none', () => {
+    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    expect(wrapper.find('.mb-1').at(4).text()).to.include('No Malus')
     wrapper.find('.mb-1').at(4).simulate('click')
-  })
-
-  it('should maps spectators and players when passing users', () => {
-    var creator = [{id:0, name:"God"}]
-    var players = [{id:0, name:"Mae"}, {id:1, name:"Comette"}]
-    var spectators = [{id:0, name:"Vivi"}, {id:1, name:"Maxou"}]
-    var users = {creator, players, spectators}
-    const wrapper = shallow(<Lobby users={users}/>)
-  })
-
-  it('should disable button "invite spectator"', () => {
-    var creator = [{id:0, name:"God"}]
-    var players = [{id:0, name:"Mae"}, {id:1, name:"Comette"}]
-    var spectators = []
-    var users = {creator, players, spectators}
-    const wrapper = shallow(<Lobby status="ended" users={users} socket={io.connect("http://localhost:3000/")}/>)
-    wrapper.find('.mb-1').at(1).simulate('click')
-  })
-
-  it('changes Indestructibles Lines', () => {
-    var creator = [{id:0, name:"God"}]
-    var players = [{id:0, name:"Mae"}, {id:1, name:"Comette"}]
-    var spectators = [{id:0, name:"Vivi"}, {id:1, name:"Maxou"}]
-    var users = {creator, players, spectators}
-    const wrapper = shallow(<Lobby users={users}/>)
-    wrapper.find('.mb-1').at(4).simulate('click');
-    wrapper.find('.mb-1').at(4).simulate('click');
+    expect(wrapper.find('.mb-1').at(4).text()).to.include('Destructibles')
+    wrapper.find('.mb-1').at(4).simulate('click')
+    expect(wrapper.find('.mb-1').at(4).text()).to.include('Indestructibles')
+    wrapper.find('.mb-1').at(4).simulate('click')
+    expect(wrapper.find('.mb-1').at(4).text()).to.include('No Malus')
   })
 })

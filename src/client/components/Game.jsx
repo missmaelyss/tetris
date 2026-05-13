@@ -4,7 +4,7 @@ import './Game.css'
 import Grid from './Grid'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
-import Lobby from "./Lobby.js"
+import Lobby from "./Lobby.jsx"
 import {useParams} from 'react-router-dom'
 const endpoint = window.location.origin
 let socket = false;
@@ -16,7 +16,7 @@ const Game = () => {
   let {room, username} = useParams();
 
   if (!socket){
-    socket = io.connect(endpoint + '?room='+ room + '&name='+ username)
+    socket = io(endpoint, { query: { room, name: username } })
   }
   const [myGrid, setMyGrid] = useState([])
   const [myScore, setMyScore] = useState([])

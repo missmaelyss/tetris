@@ -10,7 +10,7 @@ const app = express();
 app.use(index);
 app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 const server = http.createServer(app);
-const io = socketIo(server); // < Interesting!
+const io = socketIo(server, { cors: { origin: "*" } });
 let Games = [];
 
 io.on("connection", socket => {

@@ -1,9 +1,14 @@
 import { expect } from 'chai'
 import React from 'react'
-import { shallow, mount  } from 'enzyme'
-import { Server } from 'mock-socket';
+import { shallow } from 'enzyme'
+import { render } from '@testing-library/react'
 import {MemoryRouter} from 'react-router-dom'
 import Game from '../src/client/components/Game'
+
+jest.mock('socket.io-client', () => () => ({
+  on: jest.fn(),
+  emit: jest.fn(),
+}))
 
 describe('<Game />', () => {
 
@@ -14,96 +19,95 @@ describe('<Game />', () => {
   const event = { key: "", preventDefault: () => {} };
 
   it('renders without crashing', () => {
-    const wrapper = shallow(
+    shallow(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
+    )
   })
 
   it('handles touchstart ', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchstart({touches: [{ clientX: 100, clientY: 0 }]});
   })
 
   it('handles false key', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    jest.spyOn(event, 'preventDefault');
+    map.keydown(event);
+    expect(event.preventDefault).to.have.been.called;
   })
 
   it('handles key ArrowUp', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      event.key = "ArrowUp"
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = "ArrowUp"
+    jest.spyOn(event, 'preventDefault');
+    map.keydown(event);
+    expect(event.preventDefault).to.have.been.called;
   })
 
   it('handles key space', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      event.key = " "
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = " "
+    jest.spyOn(event, 'preventDefault');
+    map.keydown(event);
+    expect(event.preventDefault).to.have.been.called;
   })
 
   it('handles key ArrowDown', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      event.key = ""
-      jest.spyOn(event, 'preventDefault');
-      map.keydown(event);
-      expect(event.preventDefault).to.have.been.called;
+    )
+    event.key = ""
+    jest.spyOn(event, 'preventDefault');
+    map.keydown(event);
+    expect(event.preventDefault).to.have.been.called;
   })
 
   it('handles touchmove with no xDown and yDown', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
   })
 
   it('handles touchmove with xDown and yDown', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
-      map.touchmove({touches: [{ clientX: -200, clientY: 0 }]});
+    )
+    map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
+    map.touchmove({touches: [{ clientX: -200, clientY: 0 }]});
   })
 
   it('handles touchmove with xDown and yDown', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter initialEntries={['/42/1234']}>
         <Game/>
       </MemoryRouter>
-      )
-      map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
-      map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
+    )
+    map.touchstart({touches: [{ clientX: 100, clientY: 100 }]});
+    map.touchmove({touches: [{ clientX: 100, clientY: 0 }]});
   })
-  
 })

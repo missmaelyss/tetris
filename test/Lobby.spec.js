@@ -5,8 +5,6 @@ import { shallow } from 'enzyme'
 
 import Lobby from '../src/client/components/Lobby'
 
-const makeSocket = () => ({ emit: sinon.spy() })
-
 const users = {
   creator: { name: 'Alice' },
   players: [{ name: 'Bob' }],
@@ -24,48 +22,47 @@ describe('<Lobby />', () => {
   })
 
   it('"Start Game" is enabled when status is "waiting"', () => {
-    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="waiting" users={users} onStart={() => {}} />)
     expect(wrapper.find('.mb-1').at(0).props().disabled).to.equal(false)
   })
 
   it('"Start Game" is disabled when status is "started"', () => {
-    const wrapper = shallow(<Lobby status="started" users={users} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="started" users={users} onStart={() => {}} />)
     expect(wrapper.find('.mb-1').at(0).props().disabled).to.equal(true)
   })
 
   it('"Reset Room" is disabled when status is "waiting"', () => {
-    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="waiting" users={users} onReset={() => {}} />)
     expect(wrapper.find('.mb-1').at(2).props().disabled).to.equal(true)
   })
 
   it('"Reset Room" is enabled when status is "ended"', () => {
-    const wrapper = shallow(<Lobby status="ended" users={users} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="ended" users={users} onReset={() => {}} />)
     expect(wrapper.find('.mb-1').at(2).props().disabled).to.equal(false)
   })
 
   it('"Invite Spectators" is disabled when there are no spectators', () => {
     const usersNoSpectators = { ...users, spectators: [] }
-    const wrapper = shallow(<Lobby status="ended" users={usersNoSpectators} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="ended" users={usersNoSpectators} onSwitchSpectators={() => {}} />)
     expect(wrapper.find('.mb-1').at(1).props().disabled).to.equal(true)
   })
 
-  it('emits "start" with spectrum and lines config when Start Game is clicked', () => {
-    const socket = makeSocket()
-    const wrapper = shallow(<Lobby status="waiting" users={users} socket={socket} />)
+  it('calls onStart with spectrum and lines config when Start Game is clicked', () => {
+    const onStart = sinon.spy()
+    const wrapper = shallow(<Lobby status="waiting" users={users} onStart={onStart} />)
     wrapper.find('.mb-1').at(0).simulate('click')
-    expect(socket.emit).to.have.been.calledWith('start', { spectrum: false, lines: 0 })
+    expect(onStart).to.have.been.calledWith({ spectrum: false, lines: 0 })
   })
 
   it('toggles spectrum mode on button click', () => {
-    const socket = makeSocket()
-    const wrapper = shallow(<Lobby status="waiting" users={users} socket={socket} />)
+    const wrapper = shallow(<Lobby status="waiting" users={users} onStart={() => {}} />)
     expect(wrapper.find('.mb-1').at(3).text()).to.include('disabled')
     wrapper.find('.mb-1').at(3).simulate('click')
     expect(wrapper.find('.mb-1').at(3).text()).to.include('enabled')
   })
 
   it('cycles lines mode: none → destructible → indestructible → none', () => {
-    const wrapper = shallow(<Lobby status="waiting" users={users} socket={makeSocket()} />)
+    const wrapper = shallow(<Lobby status="waiting" users={users} onStart={() => {}} />)
     expect(wrapper.find('.mb-1').at(4).text()).to.include('No Malus')
     wrapper.find('.mb-1').at(4).simulate('click')
     expect(wrapper.find('.mb-1').at(4).text()).to.include('Destructibles')

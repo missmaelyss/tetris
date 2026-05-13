@@ -1,139 +1,110 @@
-import React, { useState, useEffect } from 'react'
-import io from "socket.io-client"
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import './Game.css'
-import Grid from './Grid'
+import Grid from './Grid.jsx'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
-import Lobby from "./Lobby.jsx"
-import {useParams} from 'react-router-dom'
-const endpoint = window.location.origin
-let socket = false;
+import Lobby from './Lobby.jsx'
+import { useParams } from 'react-router-dom'
+import { move, rotate, drop, startGame, resetGame, switchSpectators, SOCKET_CONNECT } from '../actions'
 
-let keyReady = true;
-var xDown = null;
-var yDown = null;
+let keyReady = true
+var xDown = null
+var yDown = null
+
 const Game = () => {
-  let {room, username} = useParams();
+  const { room, username } = useParams()
+  const dispatch = useDispatch()
 
-  if (!socket){
-    socket = io(endpoint, { query: { room, name: username } })
-  }
-  const [myGrid, setMyGrid] = useState([])
-  const [myScore, setMyScore] = useState([])
-  const [myPiece, setMyPiece] = useState([])
-  const [otherGrid, setOtherGrid] = useState([])
-  const [permission, setPermission] = useState([])
-  const [gameStatus, setGameStatus] = useState([])
+  const myGrid = useSelector(state => state.game.myGrid)
+  const myScore = useSelector(state => state.game.myScore)
+  const myPiece = useSelector(state => state.game.myPiece)
+  const otherPlayers = useSelector(state => state.game.otherPlayers)
+  const permission = useSelector(state => state.game.permission)
+  const gameStatus = useSelector(state => state.game.gameStatus)
 
   useEffect(() => {
-    socket.on('gameStatus', (status) => {
-      setGameStatus(status)
-    });
-    socket.on('players',(others, me, myname) => {
-      var myGrid = others.findIndex((element) => element.name === myname)
-      setMyGrid(me)
-      if (myGrid !== -1)
-        others.splice(myGrid, 1)
-      var element = others.map((other) => (
-        <Col>
-          <Grid grid={other.grid} type="other" name={other.name} score={other.score} piece={other.nextGrid}/>
-        </Col>
-      ))
-      setOtherGrid(element)
-    });
-
-    socket.on('me',(me) => {
-      setMyGrid(me.grid)
-      setMyScore(me.score)
-      setMyPiece(me.piece)
-      setPermission(me.permission)
-    });
-  }, [username]);
+    dispatch({ type: SOCKET_CONNECT, payload: { room, name: username } })
+  }, [username])
 
   function handleTouchStart(evt) {
-      xDown = evt.touches[0].clientX;
-      yDown = evt.touches[0].clientY;
-
-  };
-  
-  function handleTouchMove(evt) {
-      if ( ! xDown || ! yDown ) {
-          return;
-      }
-  
-      var xUp = evt.touches[0].clientX;
-      var yUp = evt.touches[0].clientY;
-  
-      var xDiff = xDown - xUp;
-      var yDiff = yDown - yUp;
-      if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-        if ( xDiff > 0 ) {
-          socket.emit('move', {direction: -1})
-        } else {
-          socket.emit('move', {direction: 1})
-        }                       
-      } else {
-          if ( yDiff > 0 ) {
-            socket.emit('rotate')
-          } else { 
-            socket.emit('move', {direction: 0})
-          }
-        }
-      /* reset values */
-      xDown = null;
-      yDown = null;
-  };
-  function keyHandler(event){
-    if (keyReady === false) { event.preventDefault();return; }
-    
-
-    keyReady = false
-
-    if (event.key === 'ArrowDown'){
-      event.preventDefault();
-      socket.emit('move', {name: username, direction: 0})
-    }
-    else if (event.key === 'ArrowLeft' || event.key === "ArrowRight" ){
-      socket.emit('move',{
-        name: username, 
-        direction: (event.key === "ArrowLeft" ? -1 : 1)
-      })
-    }
-    else if (event.key === " "){
-      event.preventDefault();
-      socket.emit('space', {name:username})
-    }
-    else if (event.key === "ArrowUp"){
-      event.preventDefault();
-      socket.emit('rotate', {name:username})
-    }
-    else {
-      keyReady = true
-      return;
-    }
-    setTimeout((() => {keyReady = true}), 10)
+    xDown = evt.touches[0].clientX
+    yDown = evt.touches[0].clientY
   }
 
-  window.addEventListener("keydown", keyHandler)
-  window.addEventListener("touchstart", handleTouchStart)
-  window.addEventListener("touchmove", handleTouchMove)
+  function handleTouchMove(evt) {
+    if (!xDown || !yDown) return
+
+    const xUp = evt.touches[0].clientX
+    const yUp = evt.touches[0].clientY
+    const xDiff = xDown - xUp
+    const yDiff = yDown - yUp
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      dispatch(move(xDiff > 0 ? -1 : 1))
+    } else {
+      if (yDiff > 0) dispatch(rotate())
+      else dispatch(move(0))
+    }
+    xDown = null
+    yDown = null
+  }
+
+  function keyHandler(event) {
+    if (keyReady === false) { event.preventDefault(); return }
+    keyReady = false
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      dispatch(move(0))
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      dispatch(move(event.key === 'ArrowLeft' ? -1 : 1))
+    } else if (event.key === ' ') {
+      event.preventDefault()
+      dispatch(drop())
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      dispatch(rotate())
+    } else {
+      keyReady = true
+      return
+    }
+    setTimeout(() => { keyReady = true }, 10)
+  }
+
+  window.addEventListener('keydown', keyHandler)
+  window.addEventListener('touchstart', handleTouchStart)
+  window.addEventListener('touchmove', handleTouchMove)
+
+  const otherGrid = otherPlayers.map(other => (
+    <Col key={other.name}>
+      <Grid grid={other.grid} type="other" name={other.name} score={other.score} piece={other.nextGrid || []} />
+    </Col>
+  ))
+
   return (
-    <Container id="content" xs={10} sm={6} md={4} >
+    <Container id="content" xs={10} sm={6} md={4}>
       <h1 className="display-4">Room #{room}</h1>
-      { gameStatus.status !== 'started' ? (
-        <Lobby status={gameStatus.status} users={gameStatus.users} socket={socket} username={username} />)
-      : ('')
-      }
-      {(permission === 2 ||  permission === 1) && gameStatus.status !== 'waiting' ? (
-        <Col onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} className="mb-5"><Grid grid={myGrid} type="real" name="" score={myScore} piece={myPiece}/></Col>)
-        : ('')
-      }
-      { gameStatus.status !== 'waiting' ? (
-        <Col id="other">{otherGrid}</Col>)
-        : ('')
-      }
+      {gameStatus.status !== 'started' && (
+        <Lobby
+          status={gameStatus.status}
+          users={gameStatus.users}
+          username={username}
+          onStart={(config) => dispatch(startGame(config))}
+          onReset={() => dispatch(resetGame())}
+          onSwitchSpectators={() => dispatch(switchSpectators())}
+        />
+      )}
+      {(permission === 2 || permission === 1) && gameStatus.status !== 'waiting' && (
+        <Col onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} className="mb-5">
+          <Grid grid={myGrid} type="real" name="" score={myScore} piece={myPiece} />
+        </Col>
+      )}
+      {gameStatus.status !== 'waiting' && (
+        <Col id="other">{otherGrid}</Col>
+      )}
     </Container>
-  );
+  )
 }
 
 export default Game

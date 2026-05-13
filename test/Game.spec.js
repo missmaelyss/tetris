@@ -2,13 +2,23 @@ import { expect } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { render } from '@testing-library/react'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import Game from '../src/client/components/Game'
+import rootReducer from '../src/client/reducers'
 
-jest.mock('socket.io-client', () => () => ({
-  on: jest.fn(),
-  emit: jest.fn(),
-}))
+jest.mock('../src/client/middlewares/socket', () => () => next => action => next(action))
+
+const makeStore = () => createStore(rootReducer)
+
+const renderGame = () => render(
+  <Provider store={makeStore()}>
+    <MemoryRouter initialEntries={['/42/1234']}>
+      <Game />
+    </MemoryRouter>
+  </Provider>
+)
 
 describe('<Game />', () => {
   const map = {}
@@ -26,20 +36,12 @@ describe('<Game />', () => {
   })
 
   it('handles touchstart', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     map.touchstart({ touches: [{ clientX: 100, clientY: 0 }] })
   })
 
   it('handles an unrecognised key without calling preventDefault', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     event.key = 'a'
     let called = false
     event.preventDefault = () => { called = true }
@@ -48,11 +50,7 @@ describe('<Game />', () => {
   })
 
   it('handles ArrowUp and calls preventDefault', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     event.key = 'ArrowUp'
     jest.spyOn(event, 'preventDefault')
     map.keydown(event)
@@ -60,11 +58,7 @@ describe('<Game />', () => {
   })
 
   it('handles Space and calls preventDefault', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     event.key = ' '
     jest.spyOn(event, 'preventDefault')
     map.keydown(event)
@@ -72,11 +66,7 @@ describe('<Game />', () => {
   })
 
   it('handles ArrowDown and calls preventDefault', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     event.key = 'ArrowDown'
     jest.spyOn(event, 'preventDefault')
     map.keydown(event)
@@ -84,30 +74,18 @@ describe('<Game />', () => {
   })
 
   it('handles touchmove when no touch origin is set', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     map.touchmove({ touches: [{ clientX: 100, clientY: 0 }] })
   })
 
   it('handles touchmove with horizontal swipe left', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     map.touchstart({ touches: [{ clientX: 100, clientY: 100 }] })
     map.touchmove({ touches: [{ clientX: -200, clientY: 100 }] })
   })
 
   it('handles touchmove with vertical swipe up (rotate)', () => {
-    render(
-      <MemoryRouter initialEntries={['/42/1234']}>
-        <Game />
-      </MemoryRouter>
-    )
+    renderGame()
     map.touchstart({ touches: [{ clientX: 100, clientY: 100 }] })
     map.touchmove({ touches: [{ clientX: 100, clientY: 0 }] })
   })
